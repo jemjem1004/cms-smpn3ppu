@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMKN 1 Surabaya</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Ikon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Swiper.js untuk Slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+        }
+
+        /* Warna Khusus dari Referensi */
+        .bg-navy { background-color: #002244; }
+        .text-navy { color: #002244; }
+        
+        /* Pattern Background untuk Kepala Sekolah (Meniru referensi) */
+        .bg-pattern-kepsek {
+            background-color: #004d80; /* Warna biru lebih terang dari navy */
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+
+        /* Styling Navbar */
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4b5563; /* text-gray-600 */
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: #3b82f6; /* text-blue-500 */ }
+        .nav-link.active { color: #3b82f6; }
+
+        /* Badge Hijau "LIVE NEWS" / TKA */
+        .badge-green {
+            background-color: #22c55e;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Styling Berita List */
+        .news-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .news-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Swiper Custom Pagination */
+        .swiper-pagination-bullet-active {
+            background-color: #3b82f6 !important;
+        }
+
+        /* Galeri Hover Effect */
+        .gallery-card {
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        .gallery-card img {
+            transition: transform 0.3s ease;
+        }
+        .gallery-card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigasi -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 lg:px-8 py-3 flex justify-between items-center">
+            
+            <!-- Logo Sesuai Referensi -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white shadow-sm shrink-0">
+                    <span class="text-navy font-extrabold text-[9px] text-center leading-tight">SMK<br>N1</span>
+                </div>
+                <div class="leading-none">
+                    <h1 class="font-extrabold text-xl text-navy">SMKN 1</h1>
+                    <p class="text-[9px] tracking-widest text-red-600 font-bold uppercase mt-0.5">Surabaya</p>
+                </div>
+            </div>
+
+            <!-- Menu Desktop -->
+            <nav class="hidden lg:flex items-center gap-6">
+                <a href="#" class="nav-link active">Home</a>
+                <a href="#profil" class="nav-link">Profil</a>
+                <a href="#" class="nav-link">Jurusan</a>
+                <a href="#" class="nav-link">Informasi</a>
+                <a href="#berita" class="nav-link">Berita</a>
+                <a href="#galeri" class="nav-link">Galeri Sekolah</a> <!-- Mengganti Modul -->
+                <a href="#" class="nav-link">Program</a>
+                <a href="#" class="badge-green hover:bg-green-600 transition-colors ml-2">Informasi TKA</a>
+            </nav>
+
+            <!-- Tombol Menu Mobile -->
+            <button id="mobileMenuBtn" class="lg:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Menu Mobile (Hidden by default) -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-t px-4 py-4 space-y-3">
+            <a href="#" class="block nav-link active">Home</a>
+            <a href="#profil" class="block nav-link">Profil</a>
+            <a href="#galeri" class="block nav-link">Galeri Sekolah</a>
+            <a href="#berita" class="block nav-link">Berita</a>
+            <a href="#" class="inline-block badge-green mt-2">Informasi TKA</a>
+        </div>
+    </header>
+
+    <!-- Hero Section (Background Navy) -->
+    <section class="bg-navy text-white relative">
+        <div class="container mx-auto px-4 lg:px-8 py-12 lg:py-20 flex flex-col lg:flex-row items-center gap-10">
+            
+            <!-- Teks Hero -->
+            <div class="lg:w-1/2 space-y-6">
+                <h2 class="text-3xl lg:text-4xl font-bold leading-tight">
+                    Jalur SNBP 2026 Sebanyak 83 Siswa SMKN 1 Surabaya Tembus PTN Ternama
+                </h2>
+                <p class="text-gray-300 text-sm leading-relaxed max-w-xl">
+                    www.smkn1-sby.sch.id. Surabaya - Sebanyak 83 siswa SMKN 1 Surabaya dinyatakan lolos ke Perguruan Tinggi Negeri melalui jalur prestasi tahun 2026. Hal ini membuktikan kualitas lulusan vokasi yang mampu bersaing secara akademik.
+                </p>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded font-semibold text-sm transition-colors">
+                    Baca Lebih Lanjut
+                </button>
+                
+                <!-- Dots Indikator (seperti di referensi) -->
+                <div class="flex gap-2 pt-4">
+                    <div class="w-2.5 h-2.5 rounded-full bg-white opacity-50"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-white opacity-50"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-white opacity-50"></div>
+                </div>
+            </div>
+
+            <!-- Gambar Hero Sesuai Referensi Layout -->
+            <div class="lg:w-1/2 w-full flex justify-center lg:justify-end">
+                <div class="relative w-full max-w-lg aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden border-4 border-white/10">
+                    <img src="https://images.unsplash.com/photo-1523050853063-bd80e292472d?auto=format&fit=crop&q=80&w=800" alt="" class="w-full h-full object-cover">
+                    <!-- Label ala referensi -->
+                    <div class="absolute bottom-4 left-4 bg-green-500 text-white px-3 py-1 text-xs font-bold rounded shadow-lg uppercase tracking-wider">
+                        Prestasi Siswa
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Profil & Berita Section (Layout 2 Kolom) -->
+    <section id="profil" class="py-16 bg-white">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-12">
+                
+                <!-- Kiri: Profil -->
+                <div class="lg:w-7/12">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6 border-b pb-2">Profil SMK Negeri 1 Surabaya</h3>
+                    
+                    <div class="relative w-full aspect-video bg-gray-200 rounded-lg overflow-hidden mb-4 group cursor-pointer shadow-md">
+                        <img src="https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=800" alt="" class="w-full h-full object-cover">
+                        <!-- Play Button Overlay -->
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-colors">
+                            <div class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-play text-xl ml-1"></i>
+                            </div>
+                        </div>
+                        <!-- Info Overlay Atas Kiri -->
+                        <div class="absolute top-4 left-4 flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-white">
+                                <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=100" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <span class="text-white text-xs font-bold drop-shadow-md">PROFIL TERBARU SMKN 1 SURABAYA...</span>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-600 text-sm leading-relaxed text-justify">
+                        SMK Negeri 1 Surabaya adalah sekolah menengah kejuruan unggulan yang berdedikasi untuk mencetak generasi muda yang kompeten, berkarakter, dan siap bersaing di dunia industri modern. Dengan fasilitas lengkap dan tenaga pendidik profesional, kami terus berinovasi dalam pendidikan vokasi.
+                    </p>
+                </div>
+
+                <!-- Kanan: Berita Terbaru -->
+                <div id="berita" class="lg:w-5/12">
+                    <div class="flex justify-between items-center mb-6 border-b pb-2">
+                        <h3 class="text-xl font-bold text-gray-900">Berita Terbaru</h3>
+                        <a href="#" class="bg-blue-400 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-blue-500 transition-colors">
+                            Lebih Banyak
+                        </a>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <!-- List Berita 1 -->
+                        <div class="news-item flex gap-4">
+                            <div class="w-32 h-24 shrink-0 bg-gray-200 rounded overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1524178232363-1fb28f74b671?auto=format&fit=crop&q=80&w=300" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 hover:text-blue-600 cursor-pointer leading-tight mb-1 uppercase">
+                                    Jalur SNBP 2026 Sebanyak 83 Siswa SMKN 1 Surabaya Tembus PTN Ternama
+                                </h4>
+                                <p class="text-xs text-gray-500 line-clamp-2">Keberhasilan ini merupakan wujud nyata dari komitmen sekolah dalam mendukung prestasi akademik siswa...</p>
+                            </div>
+                        </div>
+
+                        <!-- List Berita 2 -->
+                        <div class="news-item flex gap-4">
+                            <div class="w-32 h-24 shrink-0 bg-gray-200 rounded overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=300" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 hover:text-blue-600 cursor-pointer leading-tight mb-1 uppercase">
+                                    SMKN 1 Surabaya Sabet Juara Umum LKS Tingkat Kota 2026
+                                </h4>
+                                <p class="text-xs text-gray-500 line-clamp-2">Kontingen siswa berhasil memborong medali pada ajang Lomba Kompetensi Siswa tahun ini...</p>
+                            </div>
+                        </div>
+
+                        <!-- List Berita 3 -->
+                        <div class="news-item flex gap-4">
+                            <div class="w-32 h-24 shrink-0 bg-gray-200 rounded overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=300" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-900 hover:text-blue-600 cursor-pointer leading-tight mb-1 uppercase">
+                                    Kunjungan Industri Jurusan PPLG ke Perusahaan Teknologi
+                                </h4>
+                                <p class="text-xs text-gray-500 line-clamp-2">Siswa jurusan Pengembangan Perangkat Lunak dan Gim mendapatkan wawasan langsung dari praktisi industri...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Prakata Kepala Sekolah (Pattern Background ala Referensi) -->
+    <section class="bg-pattern-kepsek text-white py-16">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-10">
+                
+                <!-- Teks Prakata -->
+                <div class="lg:w-8/12 space-y-4">
+                    <h3 class="text-2xl lg:text-3xl font-bold mb-6">Prakata Kepala Sekolah</h3>
+                    <p class="text-sm lg:text-base leading-relaxed text-blue-100 italic">
+                        "Era globalisasi dengan segala implikasinya menjadi salah satu pemicu cepatnya perubahan yang terjadi pada berbagai aspek kehidupan masyarakat. Oleh karena itu, SMKN 1 Surabaya terus berupaya menyiapkan sumber daya manusia yang tangguh, terampil, dan berkarakter agar siap menghadapi tantangan masa depan."
+                    </p>
+                    <p class="text-sm lg:text-base leading-relaxed text-blue-100">
+                        Kami mengundang Anda untuk bergabung dan berkembang bersama kami dalam lingkungan pendidikan yang disiplin, inovatif, dan berorientasi pada kemajuan teknologi.
+                    </p>
+                    
+                    <div class="pt-4">
+                        <p class="font-bold text-lg uppercase">Drs. Bahrun, ST., MM.</p>
+                        <p class="text-sm text-yellow-300">Kepala Sekolah SMK Negeri 1 Surabaya</p>
+                    </div>
+                </div>
+
+                <!-- Foto Kepala Sekolah -->
+                <div class="lg:w-4/12 flex justify-center lg:justify-end">
+                    <div class="relative">
+                        <!-- Bingkai kuning tipis ala referensi -->
+                        <div class="absolute -inset-2 border border-yellow-400 rounded"></div>
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400" alt="" class="relative z-10 w-64 h-80 object-cover rounded shadow-lg grayscale">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Baru: Galeri Sekolah (Menggantikan Modul) -->
+    <section id="galeri" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 border-l-4 border-blue-500 pl-3">Galeri Sekolah</h2>
+                    <p class="text-sm text-gray-500 mt-2 pl-4">Dokumentasi kegiatan dan fasilitas kampus.</p>
+                </div>
+                <a href="#" class="text-sm font-semibold text-blue-600 hover:text-blue-800">Lihat Semua <i class="fas fa-arrow-right text-xs"></i></a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="gallery-card bg-gray-200 aspect-square">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=400" alt="" class="w-full h-full object-cover cursor-pointer">
+                </div>
+                <div class="gallery-card bg-gray-200 aspect-square">
+                    <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&q=80&w=400" alt="" class="w-full h-full object-cover cursor-pointer">
+                </div>
+                <div class="gallery-card bg-gray-200 aspect-square">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400" alt="" class="w-full h-full object-cover cursor-pointer">
+                </div>
+                <div class="gallery-card bg-gray-200 aspect-square">
+                    <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=400" alt="" class="w-full h-full object-cover cursor-pointer">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Baru: Slider Guru & Tenaga Kependidikan -->
+    <section class="py-16 bg-white border-t border-gray-100">
+        <div class="container mx-auto px-4 lg:px-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center border-b pb-4 max-w-sm mx-auto">Guru & Tenaga Kependidikan</h2>
+            
+            <!-- Swiper Slider -->
+            <div class="swiper guruSwiper pb-12">
+                <div class="swiper-wrapper">
+                    <!-- Guru 1 -->
+                    <div class="swiper-slide">
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                            <div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200" alt="" class="w-full h-full object-cover grayscale">
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-sm">Dra. Endang Sulastri</h4>
+                            <p class="text-xs text-blue-600 font-semibold mt-1">Kepala Program</p>
+                        </div>
+                    </div>
+                    <!-- Guru 2 -->
+                    <div class="swiper-slide">
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                            <div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1544168190-79c17527004f?auto=format&fit=crop&q=80&w=200" alt="" class="w-full h-full object-cover grayscale">
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-sm">Bambang Wijaya, S.Kom</h4>
+                            <p class="text-xs text-blue-600 font-semibold mt-1">Waka Kurikulum</p>
+                        </div>
+                    </div>
+                    <!-- Guru 3 -->
+                    <div class="swiper-slide">
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                            <div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1580894732230-2867e638db40?auto=format&fit=crop&q=80&w=200" alt="" class="w-full h-full object-cover grayscale">
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-sm">Siti Aminah, M.Pd</h4>
+                            <p class="text-xs text-blue-600 font-semibold mt-1">Humas</p>
+                        </div>
+                    </div>
+                    <!-- Guru 4 -->
+                    <div class="swiper-slide">
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                            <div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=200" alt="" class="w-full h-full object-cover grayscale">
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-sm">Agus Kurniawan, ST</h4>
+                            <p class="text-xs text-blue-600 font-semibold mt-1">Kepala Bengkel</p>
+                        </div>
+                    </div>
+                    <!-- Guru 5 (Untuk efek slider) -->
+                    <div class="swiper-slide">
+                        <div class="bg-gray-50 border border-gray-100 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                            <div class="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 bg-gray-200">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200" alt="" class="w-full h-full object-cover grayscale">
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-sm">Budi Santoso, S.Pd</h4>
+                            <p class="text-xs text-blue-600 font-semibold mt-1">Guru Produktif</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Navigasi Swiper -->
+                <div class="swiper-pagination mt-4"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy text-gray-300 pt-16 pb-8 border-t-4 border-yellow-400">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+                
+                <!-- Kolom 1: Identitas -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center border border-white shrink-0">
+                            <span class="text-navy font-extrabold text-[9px] text-center leading-tight">SMK<br>N1</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-white leading-none">SMKN 1 <br><span class="text-[10px] text-red-500 tracking-widest uppercase">Surabaya</span></h2>
+                    </div>
+                    <p class="text-sm leading-relaxed mb-4 text-gray-400">
+                        Pusat pendidikan kejuruan yang berdedikasi mencetak lulusan unggul, terampil, dan berakhlak mulia untuk kebutuhan industri global.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-blue-600 text-white transition-colors"><i class="fab fa-facebook-f text-sm"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-pink-600 text-white transition-colors"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 text-white transition-colors"><i class="fab fa-youtube text-sm"></i></a>
+                    </div>
+                </div>
+
+                <!-- Kolom 2: Tautan Cepat -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Tautan Cepat</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Profil Sekolah</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Visi & Misi</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Kompetensi Keahlian</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">PPDB Online</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">E-Learning Siswa</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 3: Informasi -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Informasi</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Berita Terbaru</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Pengumuman Kelulusan</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Bursa Kerja Khusus (BKK)</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Data Pokok Pendidikan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 4: Kontak -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Hubungi Kami</h4>
+                    <div class="space-y-3 text-sm text-gray-400">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-map-marker-alt text-yellow-400 mt-1"></i>
+                            <p>Jl. SMEA No. 4, Wonokromo, Kec. Wonokromo, Kota Surabaya, Jawa Timur 60243</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-phone-alt text-yellow-400"></i>
+                            <p>(031) 8292039</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-envelope text-yellow-400"></i>
+                            <p>info@smkn1-sby.sch.id</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="border-t border-white/10 pt-6 text-center">
+                <p class="text-xs text-gray-500 font-medium tracking-wide">
+                    &copy; 2026 Hak Cipta Terpelihara. SMK Negeri 1 Surabaya.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script Utama -->
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        // Toggle Menu Mobile
+        const btn = document.getElementById('mobileMenuBtn');
+        const menu = document.getElementById('mobileMenu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Inisialisasi Swiper untuk Slider Guru
+        const swiper = new Swiper(".guruSwiper", {
+            slidesPerView: 2, // Default mobile
+            spaceBetween: 15,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            breakpoints: {
+                // Saat lebar layar >= 640px
+                640: {
+                    slidesPerView: 3,
+                    spaceBetween: 20,
+                },
+                // Saat lebar layar >= 1024px (desktop)
+                1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 30,
+                },
+            },
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            loop: true,
+        });
+
+        // Smooth Scrolling untuk Navigasi (Opsional)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70, // Offset untuk tinggi navbar
+                        behavior: 'smooth'
+                    });
+                    
+                    // Tutup menu mobile jika sedang terbuka
+                    if (!menu.classList.contains('hidden')) {
+                        menu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
