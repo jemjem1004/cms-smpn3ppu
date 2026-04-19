@@ -131,6 +131,8 @@ export interface SiteContact {
   address: string
   phone: string
   email: string
+  mapsEmbedUrl: string
+  whatsapp: string
 }
 
 export interface SiteSocial {
@@ -140,8 +142,19 @@ export interface SiteSocial {
   tiktok: string
 }
 
+export interface SiteFooterLink {
+  id: string
+  label: string
+  url: string
+}
+
+export interface SiteFooter {
+  links: SiteFooterLink[]
+}
+
 export interface SiteSettings {
   identity: SiteIdentity
   contact: SiteContact
   social: SiteSocial
+  footer: SiteFooter
 }

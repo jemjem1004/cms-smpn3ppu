@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { toast } from "sonner"
-import { Building2, Phone, Share2, Save } from "lucide-react"
+import { Building2, Phone, Share2, Save, LayoutTemplate, Plus, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,8 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ImageUploader } from "@/components/admin/image-uploader"
-import { updateIdentity, updateContact, updateSocial } from "@/actions/settings"
-import type { SiteSettings, SiteIdentity, SiteContact, SiteSocial } from "@/types"
+import { updateIdentity, updateContact, updateSocial, updateFooter } from "@/actions/settings"
+import type { SiteSettings, SiteIdentity, SiteContact, SiteSocial, SiteFooter, SiteFooterLink } from "@/types"
 
 interface SettingsFormProps {
   initialSettings: SiteSettings
@@ -31,6 +31,9 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   // Social state
   const [social, setSocial] = useState<SiteSocial>(initialSettings.social)
   const [socialErrors, setSocialErrors] = useState<Record<string, string[]>>({})
+
+  // Footer state
+  const [footerLinks, setFooterLinks] = useState<SiteFooterLink[]>(initialSettings.footer?.links ?? [])
 
   function handleSaveIdentity() {
     setIdentityErrors({})
@@ -71,6 +74,29 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
     })
   }
 
+  function handleSaveFooter() {
+    startTransition(async () => {
+      const result = await updateFooter({ links: footerLinks })
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+      toast.success("Footer berhasil disimpan")
+    })
+  }
+
+  function addFooterLink() {
+    setFooterLinks((prev) => [...prev, { id: crypto.randomUUID(), label: "", url: "" }])
+  }
+
+  function removeFooterLink(id: string) {
+    setFooterLinks((prev) => prev.filter((l) => l.id !== id))
+  }
+
+  function updateFooterLink(id: string, field: keyof SiteFooterLink, value: string) {
+    setFooterLinks((prev) => prev.map((l) => l.id === id ? { ...l, [field]: value } : l))
+  }
+
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-10">
@@ -101,6 +127,10 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <TabsTrigger value="social" className="rounded-xl data-[state=active]:bg-[#002244] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:shadow-sm px-6 py-2.5 transition-all text-slate-500 font-medium">
             <Share2 className="mr-2 h-4 w-4" />
             Media Sosial
+          </TabsTrigger>
+          <TabsTrigger value="footer" className="rounded-xl data-[state=active]:bg-[#002244] data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:shadow-sm px-6 py-2.5 transition-all text-slate-500 font-medium">
+            <LayoutTemplate className="mr-2 h-4 w-4" />
+            Footer
           </TabsTrigger>
         </TabsList>
 
@@ -251,6 +281,47 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 />
                 {contactErrors.email && <p className="text-sm text-destructive font-medium">{contactErrors.email[0]}</p>}
               </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="whatsapp" className="text-slate-700 font-semibold">Nomor WhatsApp</Label>
+                <Input
+                  id="whatsapp"
+                  placeholder="628123456789 (format internasional, tanpa + atau spasi)"
+                  value={contact.whatsapp ?? ""}
+                  onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })}
+                />
+                <p className="text-xs text-slate-400">Digunakan untuk halaman Kontak & Pengaduan. Contoh: <code className="bg-slate-100 px-1 rounded">628123456789</code></p>
+              </div>
+            </div>
+            <div className="pt-4 border-t border-slate-100 space-y-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Lokasi di Maps</h2>
+                <p className="text-xs text-slate-400 font-medium mt-1">
+                  Embed Google Maps yang tampil di footer website. Buka Google Maps → klik &quot;Bagikan&quot; → &quot;Sematkan peta&quot; → salin URL dari atribut <code className="bg-slate-100 px-1 rounded">src</code> pada kode iframe.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mapsEmbedUrl" className="text-slate-700 font-semibold">URL Embed Google Maps</Label>
+                <Input
+                  id="mapsEmbedUrl"
+                  placeholder="https://www.google.com/maps/embed?pb=..."
+                  value={contact.mapsEmbedUrl ?? ""}
+                  onChange={(e) => setContact({ ...contact, mapsEmbedUrl: e.target.value })}
+                />
+              </div>
+              {contact.mapsEmbedUrl && (
+                <div className="rounded-xl overflow-hidden border border-slate-200 h-40">
+                  <iframe
+                    src={contact.mapsEmbedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Preview Maps"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end pt-4 border-t border-slate-100">
@@ -340,6 +411,126 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
               <Button onClick={handleSaveSocial} disabled={isPending} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-md transition-all active:scale-95 px-8 font-semibold h-11">
                 <Save className="mr-2 h-4 w-4" />
                 {isPending ? "Menyimpan..." : "Simpan Tautan Sosial"}
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* ── Tab: Footer ── */}
+        <TabsContent value="footer" className="outline-none focus:ring-0">
+          <div className="bg-white p-6 md:p-8 rounded-2xl border border-slate-200/60 shadow-sm space-y-8">
+
+            {/* Section: Links Terkait */}
+            <div className="space-y-4">
+              <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Links Terkait</h2>
+                  <p className="text-xs text-slate-400 font-medium mt-1">
+                    Tampil di kolom &quot;Links Terkait&quot; footer. Gunakan untuk link aplikasi sekolah, portal siswa, PPDB, dll.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={addFooterLink}
+                  variant="outline"
+                  className="rounded-xl border-slate-200 shrink-0"
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Tambah Link
+                </Button>
+              </div>
+
+              {footerLinks.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-slate-400 bg-slate-50/50">
+                  <p className="font-medium">Belum ada link.</p>
+                  <p className="text-sm mt-1">Klik &quot;Tambah Link&quot; untuk menambahkan tautan ke footer.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {footerLinks.map((link, index) => (
+                    <div key={link.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50/50">
+                      <span className="text-xs font-bold text-slate-400 w-5 shrink-0">{index + 1}</span>
+                      <Input
+                        placeholder="Label (contoh: BKK, LSP, PPDB)"
+                        value={link.label}
+                        onChange={(e) => updateFooterLink(link.id, "label", e.target.value)}
+                        className="flex-1"
+                      />
+                      <Input
+                        placeholder="URL (contoh: https://ppdb.sekolah.sch.id)"
+                        value={link.url}
+                        onChange={(e) => updateFooterLink(link.id, "url", e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeFooterLink(link.id)}
+                        className="text-destructive hover:bg-red-50 shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Section: Lokasi Maps */}
+            <div className="space-y-4 pt-4 border-t border-slate-100">
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Lokasi Sekolah (Maps)</h2>
+                <p className="text-xs text-slate-400 font-medium mt-1">
+                  Embed Google Maps yang tampil di kolom &quot;Lokasi&quot; footer.
+                </p>
+                <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-1">
+                  <p className="font-bold">⚠️ Gunakan URL Embed, bukan link share biasa</p>
+                  <ol className="list-decimal list-inside space-y-0.5 text-amber-700">
+                    <li>Buka <strong>maps.google.com</strong> di browser</li>
+                    <li>Cari lokasi sekolah</li>
+                    <li>Klik ikon <strong>Bagikan</strong> → pilih tab <strong>Sematkan peta</strong></li>
+                    <li>Klik <strong>Salin HTML</strong></li>
+                    <li>Dari kode iframe yang disalin, ambil hanya URL di atribut <code className="bg-amber-100 px-1 rounded">src="..."</code></li>
+                  </ol>
+                  <p className="text-amber-600 mt-1">URL yang benar dimulai dengan: <code className="bg-amber-100 px-1 rounded">https://www.google.com/maps/embed?pb=</code></p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mapsEmbedUrl" className="text-slate-700 font-semibold">URL Embed Google Maps</Label>
+                <Input
+                  id="mapsEmbedUrl"
+                  placeholder="https://www.google.com/maps/embed?pb=..."
+                  value={contact.mapsEmbedUrl ?? ""}
+                  onChange={(e) => setContact({ ...contact, mapsEmbedUrl: e.target.value })}
+                />
+              </div>
+              {contact.mapsEmbedUrl && (
+                <div className="rounded-xl overflow-hidden border border-slate-200" style={{ height: "200px" }}>
+                  <iframe
+                    src={contact.mapsEmbedUrl}
+                    width="100%"
+                    height="200"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Preview Maps"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-slate-100">
+              <Button
+                onClick={() => {
+                  handleSaveFooter()
+                  handleSaveContact()
+                }}
+                disabled={isPending}
+                className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-md transition-all active:scale-95 px-8 font-semibold h-11"
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {isPending ? "Menyimpan..." : "Simpan Pengaturan Footer"}
               </Button>
             </div>
           </div>

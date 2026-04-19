@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import { Calendar, User, ChevronLeft, Share2, Tag, ArrowRight } from "lucide-react"
 
 function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim()
@@ -81,53 +82,38 @@ export default async function ArticleDetailPage({
     : []
 
   return (
-    <article className="bg-white min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
-        {/* Back link */}
-        <Link
-          href="/berita"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-[#002244] transition-colors mb-8"
-        >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Kembali ke Berita
-        </Link>
+    <main className="bg-white min-h-screen pb-20">
+      
+      {/* Minimalist Title Bar - Consitent but more compact */}
+      <header className="bg-[#002244] border-b-2 border-[#FFC107] pt-8 pb-8 md:pt-10 md:pb-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="text-white/40 text-[9px] font-bold tracking-[0.2em] uppercase mb-3 flex items-center gap-2">
+            <Link href="/" className="hover:text-white transition-colors">Beranda</Link> 
+            <span>/</span> 
+            <Link href="/berita" className="hover:text-white transition-colors">Berita</Link>
+          </nav>
+          
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight mb-5">
+            {article.title}
+          </h1>
 
-        {/* Category badge */}
-        {article.category && (
-          <span className="inline-block text-xs font-semibold text-[#FFC107] bg-[#FFC107]/10 px-3 py-1 rounded-full mb-4">
-            {article.category.name}
-          </span>
-        )}
-
-        {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-bold text-[#002244] leading-tight">
-          {article.title}
-        </h1>
-
-        {/* Meta */}
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-500">
-          <span className="font-medium text-gray-700">
-            {article.author.name}
-          </span>
-          <span>·</span>
-          <time>{formatDate(article.publishedAt)}</time>
+          <div className="flex items-center gap-5 text-[9px] font-bold uppercase tracking-[0.2em] text-white/40">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[#FFC107]">Oleh</span>
+              <span className="text-white/60">{article.author.name}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[#FFC107]">Pada</span>
+              <span className="text-white/60">{formatDate(article.publishedAt)}</span>
+            </div>
+          </div>
         </div>
+      </header>
 
-        {/* Thumbnail */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Featured Image - Clean */}
         {article.thumbnailUrl && (
-          <div className="relative mt-8 aspect-[16/9] rounded-xl overflow-hidden bg-gray-100">
+          <div className="relative aspect-[21/9] rounded-2xl overflow-hidden bg-slate-50 mb-12">
             <Image
               src={article.thumbnailUrl}
               alt={article.title}
@@ -139,47 +125,50 @@ export default async function ArticleDetailPage({
           </div>
         )}
 
-        {/* Article content */}
+        {/* Article content - Refined Prosc */}
         <div
-          className="prose prose-lg max-w-none mt-10 prose-headings:text-[#002244] prose-a:text-blue-600 prose-img:rounded-lg"
+          className="prose prose-slate prose-lg max-w-none 
+            prose-headings:text-[#002244] prose-headings:font-extrabold 
+            prose-p:text-slate-700 prose-p:leading-relaxed prose-p:mb-6
+            prose-a:text-[#002244] prose-a:underline prose-a:underline-offset-4 hover:prose-a:text-[#FFC107]
+            prose-img:rounded-xl prose-strong:text-[#002244]"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
-        {/* Related articles */}
+        {/* Related - Minimal Grid */}
         {relatedArticles.length > 0 && (
-          <div className="mt-14 pt-10 border-t border-gray-100">
-            <h2 className="text-xl font-bold text-[#002244] mb-6">
-              Artikel Terkait
+          <div className="mt-24 pt-16 border-t border-slate-100">
+            <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-[#002244] mb-10 text-center">
+              Berita Lainnya
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {relatedArticles.map((related) => (
                 <Link
                   key={related.slug}
                   href={`/berita/${related.slug}`}
-                  className="group flex flex-col rounded-xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow bg-white"
+                  className="group block"
                 >
-                  <div className="relative aspect-[16/9] bg-gray-100">
+                  <div className="relative aspect-[16/10] bg-slate-50 rounded-xl overflow-hidden mb-4">
                     {related.thumbnailUrl ? (
                       <Image
                         src={related.thumbnailUrl}
                         alt={related.title}
                         fill
                         sizes="(max-width: 640px) 100vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <svg className="h-8 w-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                      <div className="flex items-center justify-center h-full text-slate-200">
+                        <Tag className="h-6 w-6" />
                       </div>
                     )}
                   </div>
-                  <div className="p-4 flex-1">
-                    <h3 className="text-sm font-bold text-[#002244] group-hover:text-blue-600 line-clamp-2 transition-colors">
-                      {related.title}
-                    </h3>
-                    <p className="text-xs text-gray-400 mt-2">{formatDate(related.publishedAt)}</p>
+                  <h3 className="text-sm font-bold text-[#002244] line-clamp-2 leading-snug group-hover:text-[#FFC107] transition-colors">
+                    {related.title}
+                  </h3>
+                  <div className="mt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                    {formatDate(related.publishedAt)}
                   </div>
                 </Link>
               ))}
@@ -187,6 +176,6 @@ export default async function ArticleDetailPage({
           </div>
         )}
       </div>
-    </article>
+    </main>
   )
 }

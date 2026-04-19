@@ -91,6 +91,11 @@ export function MobileMenuToggle({ items, identity }: MobileMenuToggleProps) {
                     )}
                   </>
                 ) : (
+                  item.url === "#" ? (
+                    <span className="block px-6 py-3 text-white/60 text-sm cursor-default">
+                      {item.label}
+                    </span>
+                  ) : (
                   <Link
                     href={item.url}
                     onClick={() => setOpen(false)}
@@ -100,6 +105,7 @@ export function MobileMenuToggle({ items, identity }: MobileMenuToggleProps) {
                   >
                     {item.label}
                   </Link>
+                  )
                 )}
               </li>
             ))}

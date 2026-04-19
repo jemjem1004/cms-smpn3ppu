@@ -17,7 +17,7 @@ export const menuItemSchema = z.object({
   label: z.string().min(1, "Label wajib diisi").max(100, "Label maksimal 100 karakter"),
   url: z.string().min(1, "URL wajib diisi"),
   type: z.enum(["INTERNAL", "EXTERNAL"]),
-  parentId: z.string().cuid().nullable(),
+  parentId: z.string().nullable(),
   order: z.number().int("Urutan harus bilangan bulat").min(0, "Urutan tidak boleh negatif"),
 })
 

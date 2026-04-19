@@ -20,8 +20,10 @@ const STATIC_ROUTES = [
   { label: "Beranda", url: "/" },
   { label: "Berita", url: "/berita" },
   { label: "Galeri", url: "/galeri" },
+  { label: "Guru & Tendik", url: "/guru-tendik" },
   { label: "Pengumuman", url: "/pengumuman" },
   { label: "Agenda", url: "/agenda" },
+  { label: "Kontak & Pengaduan", url: "/kontak" },
 ]
 
 interface ContentManagerProps {
@@ -532,7 +534,7 @@ function PrakataTab({ initialData }: { initialData: PrincipalContent }) {
             maxSizeMB={3}
           />
           <p className="text-xs text-muted-foreground">
-            Foto ditampilkan dalam lingkaran dengan border kuning dan efek grayscale.
+            Gunakan foto PNG transparan (tanpa background). Rekomendasi ukuran: <strong>600×800px</strong> (rasio 3:4, portrait). Foto akan tampil menonjol di section prakata landing page.
           </p>
         </div>
 

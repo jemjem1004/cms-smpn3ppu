@@ -54,8 +54,7 @@ export async function Navbar() {
                       >
                         {item.label}
                         <ChevronDown className="h-3.5 w-3.5 opacity-70 group-hover:opacity-100 transition-transform group-hover:rotate-180" />
-                      </button>
-                      <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
+                      </button>                      <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
                         <ul className="bg-white border border-slate-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] min-w-[220px] py-2.5 transform origin-top-left animate-in fade-in slide-in-from-top-2 duration-200">
                           {item.children.map((child) => (
                              <li key={child.id}>
@@ -73,6 +72,13 @@ export async function Navbar() {
                       </div>
                     </>
                   ) : (
+                    item.url === "#" ? (
+                      <button
+                        className="block px-3 py-2 text-[0.85rem] font-semibold text-slate-600 cursor-default"
+                      >
+                        {item.label}
+                      </button>
+                    ) : (
                     <Link
                       href={item.url}
                       className="block px-3 py-2 text-[0.85rem] font-semibold text-slate-600 hover:text-blue-600 transition-colors"
@@ -81,6 +87,7 @@ export async function Navbar() {
                     >
                       {item.label}
                     </Link>
+                    )
                   )}
                 </li>
               ))}

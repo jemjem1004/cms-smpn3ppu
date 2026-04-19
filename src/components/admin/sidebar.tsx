@@ -16,6 +16,8 @@ import {
   BookOpen,
   Settings,
   Megaphone,
+  CalendarDays,
+  Globe,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -34,7 +36,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import type { Permission } from "@/lib/rbac"
 
@@ -45,18 +46,51 @@ interface NavItem {
   permission?: Permission
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { label: "Menu", href: "/admin/menu", icon: Menu, permission: "menu:manage" },
-  { label: "Halaman", href: "/admin/halaman", icon: BookOpen, permission: "page:manage" },
-  { label: "Konten", href: "/admin/konten", icon: FileText, permission: "content:manage" },
-  { label: "Berita", href: "/admin/berita", icon: Newspaper, permission: "article:create" },
-  { label: "Pengumuman", href: "/admin/pengumuman", icon: Megaphone, permission: "content:manage" },
-  { label: "Galeri", href: "/admin/galeri", icon: Image, permission: "gallery:manage" },
-  { label: "Guru & Tendik", href: "/admin/guru", icon: GraduationCap, permission: "staff:manage" },
-  { label: "Pengguna", href: "/admin/pengguna", icon: Users, permission: "user:manage" },
-  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, permission: "menu:manage" },
+interface NavGroup {
+  label: string
+  items: NavItem[]
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Umum",
+    items: [
+      { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: "Konten Website",
+    items: [
+      { label: "Konten Halaman", href: "/admin/konten", icon: FileText, permission: "content:manage" },
+      { label: "Halaman Kustom", href: "/admin/halaman", icon: BookOpen, permission: "page:manage" },
+      { label: "Berita", href: "/admin/berita", icon: Newspaper, permission: "article:create" },
+      { label: "Galeri", href: "/admin/galeri", icon: Image, permission: "gallery:manage" },
+      { label: "Guru & Tendik", href: "/admin/guru", icon: GraduationCap, permission: "staff:manage" },
+    ],
+  },
+  {
+    label: "Informasi Publik",
+    items: [
+      { label: "Pengumuman & Agenda", href: "/admin/pengumuman", icon: Megaphone, permission: "content:manage" },
+    ],
+  },
+  {
+    label: "Navigasi",
+    items: [
+      { label: "Menu Navigasi", href: "/admin/menu", icon: Menu, permission: "menu:manage" },
+    ],
+  },
+  {
+    label: "Sistem",
+    items: [
+      { label: "Pengguna", href: "/admin/pengguna", icon: Users, permission: "user:manage" },
+      { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, permission: "menu:manage" },
+    ],
+  },
 ]
+
+// Flat list untuk keperluan permission check
+const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((g) => g.items)
 
 const ROLE_PERMISSIONS: Record<string, string[]> = {
   SUPER_ADMIN: [
@@ -93,6 +127,16 @@ function getVisibleItems(role: string) {
   return NAV_ITEMS.filter((item) => !item.permission || perms.includes(item.permission))
 }
 
+function getVisibleGroups(role: string): NavGroup[] {
+  const perms = ROLE_PERMISSIONS[role] ?? []
+  return NAV_GROUPS
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => !item.permission || perms.includes(item.permission)),
+    }))
+    .filter((group) => group.items.length > 0)
+}
+
 function NavLinks({ items, onNavigate, isMinimized }: { items: NavItem[]; onNavigate?: () => void; isMinimized?: boolean }) {
   const pathname = usePathname()
 
@@ -127,10 +171,59 @@ function NavLinks({ items, onNavigate, isMinimized }: { items: NavItem[]; onNavi
   )
 }
 
+function NavGroupLinks({ groups, onNavigate, isMinimized }: { groups: NavGroup[]; onNavigate?: () => void; isMinimized?: boolean }) {
+  const pathname = usePathname()
+
+  return (
+    <nav className="flex flex-col gap-0.5">
+      {groups.map((group, gi) => (
+        <div key={group.label} className={gi > 0 ? "mt-4" : ""}>
+          {!isMinimized && (
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-blue-300/40 px-3.5 mb-1.5">
+              {group.label}
+            </p>
+          )}
+          {isMinimized && gi > 0 && (
+            <div className="w-6 h-px bg-white/10 mx-auto mb-3" />
+          )}
+          <div className="flex flex-col gap-0.5">
+            {group.items.map((item) => {
+              const Icon = item.icon
+              const isActive = item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname.startsWith(item.href)
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onNavigate}
+                  title={isMinimized ? item.label : undefined}
+                  className={cn(
+                    "flex items-center rounded-xl py-2.5 text-sm font-medium transition-all duration-200",
+                    isMinimized ? "justify-center px-0 w-10 mx-auto" : "gap-3.5 px-3.5",
+                    isActive
+                      ? "bg-blue-600 text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)]"
+                      : "text-blue-100/70 hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  <Icon className={cn("h-[18px] w-[18px] shrink-0 transition-transform duration-300", isActive ? "scale-110" : "scale-100 opacity-80")} />
+                  {!isMinimized && <span className="truncate tracking-wide">{item.label}</span>}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  )
+}
+
 export function AdminSidebar({ user, children }: AdminSidebarProps) {
   const [open, setOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const visibleItems = getVisibleItems(user.role)
+  const visibleGroups = getVisibleGroups(user.role)
 
   const roleLabel: Record<string, string> = {
     SUPER_ADMIN: "Super Admin",
@@ -171,8 +264,8 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3.5 py-8 overflow-x-hidden relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-          <NavLinks items={visibleItems} isMinimized={isMinimized} />
+        <div className="flex-1 overflow-y-auto px-3.5 py-6 overflow-x-hidden relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          <NavGroupLinks groups={visibleGroups} isMinimized={isMinimized} />
         </div>
 
         <div className={cn("border-t border-white/5 transition-all relative z-10", isMinimized ? "p-3" : "p-4")}>
@@ -218,7 +311,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
               </div>
             </SheetHeader>
             <div className="px-3.5 py-6">
-              <NavLinks items={visibleItems} onNavigate={() => setOpen(false)} />
+              <NavGroupLinks groups={visibleGroups} onNavigate={() => setOpen(false)} />
             </div>
           </SheetContent>
         </Sheet>

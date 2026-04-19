@@ -1,21 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
-import { MapPin, Phone, Mail } from "lucide-react"
+import { ChevronRight, Map } from "lucide-react"
 import { getSiteSettings } from "@/lib/queries"
-
-const quickLinks = [
-  { label: "Beranda", href: "/" },
-  { label: "Profil", href: "/profil" },
-  { label: "Berita", href: "/berita" },
-  { label: "Galeri", href: "/galeri" },
-]
-
-const infoLinks = [
-  { label: "Visi & Misi", href: "/profil#visi-misi" },
-  { label: "Jurusan", href: "/profil#jurusan" },
-  { label: "Kontak", href: "/kontak" },
-  { label: "Penerimaan Siswa Baru", href: "/ppdb" },
-]
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -54,45 +40,79 @@ function TiktokIcon({ className }: { className?: string }) {
 
 export async function Footer() {
   const settings = await getSiteSettings()
-  const { identity, contact, social } = settings
+  const { identity, contact, social, footer } = settings
 
-  // Build social links array from settings
   const socialLinks = [
-    social.facebook && { label: "Facebook", href: social.facebook, icon: <FacebookIcon className="h-4 w-4" /> },
-    social.instagram && { label: "Instagram", href: social.instagram, icon: <InstagramIcon className="h-4 w-4" /> },
     social.youtube && { label: "YouTube", href: social.youtube, icon: <YoutubeIcon className="h-4 w-4" /> },
+    social.instagram && { label: "Instagram", href: social.instagram, icon: <InstagramIcon className="h-4 w-4" /> },
+    social.facebook && { label: "Facebook", href: social.facebook, icon: <FacebookIcon className="h-4 w-4" /> },
     social.tiktok && { label: "TikTok", href: social.tiktok, icon: <TiktokIcon className="h-4 w-4" /> },
   ].filter(Boolean) as { label: string; href: string; icon: React.ReactNode }[]
 
+  const footerLinks: any[] = footer?.links ?? []
+
   return (
-    <footer className="bg-[#002244] border-t-4 border-[#FFC107]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Column 1: School Identity + Social Media */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
+    <footer className="bg-[#002244] mt-16 relative overflow-hidden">
+      {/* Subtle Background Pattern (Dot Grid) */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, white 1.5px, transparent 0)`,
+          backgroundSize: '32px 32px'
+        }}
+      />
+
+      {/* Gentle Ambient Overlay Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-[#FFC107]/5 pointer-events-none" />
+
+      {/* Large Transparent Logo Element on the Right */}
+      {identity.logoUrl && (
+        <div className="absolute top-1/2 -right-32 -translate-y-1/2 opacity-[0.02] pointer-events-none blur-[2px] hidden lg:block">
+          <Image
+            src={identity.logoUrl}
+            alt="Watermark"
+            width={600}
+            height={600}
+            className="object-contain"
+          />
+        </div>
+      )}
+
+      {/* A thin yellow line indicating the separation */}
+      <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFC107]/50 to-transparent opacity-60" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8 items-start">
+          
+          {/* Kolom 1: Identitas & Deskripsi */}
+          <div className="md:col-span-12 lg:col-span-4 flex flex-col">
+            <Link href="/" className="flex items-center gap-3 mb-4 group inline-flex max-w-fit">
               {identity.logoUrl ? (
-                <Image
-                  src={identity.logoUrl}
-                  alt={identity.name}
-                  width={36}
-                  height={36}
-                  className="h-9 w-9 rounded-full object-cover"
-                />
+                <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-white/5 p-2 ring-1 ring-white/10 group-hover:ring-[#FFC107]/50 transition-all duration-300">
+                  <Image
+                    src={identity.logoUrl}
+                    alt={identity.name}
+                    fill
+                    className="object-contain p-2"
+                  />
+                </div>
               ) : (
-                <div className="flex items-center justify-center h-9 w-9 rounded-full bg-[#FFC107] text-[#002244] font-bold text-sm">
-                  {identity.shortName.split(" ").map(w => w[0]).join("").slice(0, 2)}
+                <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-gradient-to-br from-[#FFC107] to-amber-600 shadow-sm text-[#002244] font-bold text-xl shrink-0 group-hover:shadow-[#FFC107]/20 transition-all">
+                  {identity.shortName.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
                 </div>
               )}
-              <span className="text-white font-bold text-lg tracking-tight">
-                {identity.shortName} <span className="text-[#FFC107]">{identity.tagline}</span>
-              </span>
-            </div>
-            <p className="text-white/60 text-sm leading-relaxed mb-4">
+              <div className="flex flex-col">
+                <span className="text-white font-bold text-xl tracking-tight leading-none group-hover:text-[#FFC107] transition-colors">{identity.shortName}</span>
+                {identity.tagline && <span className="text-[#FFC107]/70 text-xs mt-1 truncate max-w-[200px] font-medium">{identity.tagline}</span>}
+              </div>
+            </Link>
+
+            <p className="text-white/60 text-sm leading-relaxed mb-5 max-w-md line-clamp-3">
               {identity.description}
             </p>
+
             {socialLinks.length > 0 && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {socialLinks.map((s) => (
                   <a
                     key={s.label}
@@ -100,7 +120,7 @@ export async function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={s.label}
-                    className="flex items-center justify-center h-8 w-8 rounded-full bg-white/10 text-white/70 hover:bg-[#FFC107] hover:text-[#002244] transition-colors"
+                    className="flex items-center justify-center h-9 w-9 rounded-full bg-white/5 border border-white/5 text-white/50 hover:bg-[#FFC107] hover:text-[#002244] hover:border-[#FFC107] transition-all duration-300"
                   >
                     {s.icon}
                   </a>
@@ -109,81 +129,84 @@ export async function Footer() {
             )}
           </div>
 
-          {/* Column 2: Quick Links */}
-          <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+          {/* Kolom 2: Tautan Cepat */}
+          <div className="md:col-span-5 lg:col-span-3 flex flex-col pt-1">
+            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FFC107]" />
               Tautan Cepat
             </h3>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-white/60 text-sm hover:text-[#FFC107] transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            
+            {footerLinks.length > 0 ? (
+              <ul className="flex flex-col gap-3">
+                {footerLinks.map((link) => (
+                  <li key={link.id}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-3 text-white/60 hover:text-[#FFC107] text-sm transition-colors"
+                    >
+                      <ChevronRight className="h-3 w-3 opacity-0 -translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#FFC107]" />
+                      <span className="group-hover:-translate-x-1 transition-transform">{link.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-white/40 text-xs italic">Belum ada tautan terkait</p>
+            )}
           </div>
 
-          {/* Column 3: Information */}
-          <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-              Informasi
+          {/* Kolom 3: Lokasi Maps */}
+          <div className="md:col-span-7 lg:col-span-5 flex flex-col pt-1">
+            <h3 className="text-white font-semibold text-base mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FFC107]" />
+              Lokasi Map
             </h3>
-            <ul className="space-y-2">
-              {infoLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-white/60 text-sm hover:text-[#FFC107] transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            
+            <div className="rounded-xl overflow-hidden bg-white/5 border border-white/10 h-48 relative group shadow-sm">
+              {contact.mapsEmbedUrl ? (
+                <>
+                  <div className="absolute inset-0 bg-[#002244] animate-pulse" />
+                  <iframe
+                    src={contact.mapsEmbedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title={`Lokasi ${identity.shortName}`}
+                    className="relative z-10 w-full h-full grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                  />
+                </>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                  <Map className="h-6 w-6 text-white/20 mb-2" />
+                  <p className="text-white/40 text-xs">Belum ada lokasi map</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Column 4: Contact */}
-          <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-              Kontak
-            </h3>
-            <ul className="space-y-3">
-              {contact.address && (
-                <li className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-[#FFC107] mt-0.5 shrink-0" />
-                  <span className="text-white/60 text-sm">{contact.address}</span>
-                </li>
-              )}
-              {contact.phone && (
-                <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-[#FFC107] shrink-0" />
-                  <span className="text-white/60 text-sm">{contact.phone}</span>
-                </li>
-              )}
-              {contact.email && (
-                <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-[#FFC107] shrink-0" />
-                  <span className="text-white/60 text-sm">{contact.email}</span>
-                </li>
-              )}
-            </ul>
-          </div>
         </div>
       </div>
 
       {/* Copyright Bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-white/5 bg-black/10 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} {identity.name}. All rights reserved.
-          </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="text-white/40 text-xs text-center md:text-left">
+              &copy; {new Date().getFullYear()} <span className="text-white/70">{identity.name}</span>. All rights reserved.
+            </p>
+            <div className="flex items-center gap-1.5 text-[0.65rem] text-white/30 tracking-wide">
+              <span>developed by</span>
+              <a href="#" className="font-semibold text-white/50 hover:text-[#FFC107] transition-colors cursor-pointer uppercase letter-spacing-wide">Astro digital solution</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
   )
 }
+

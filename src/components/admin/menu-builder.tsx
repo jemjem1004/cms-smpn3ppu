@@ -178,12 +178,17 @@ const STATIC_ROUTES = [
   { label: "Beranda", url: "/" },
   { label: "Berita", url: "/berita" },
   { label: "Galeri", url: "/galeri" },
+  { label: "Guru & Tendik", url: "/guru-tendik" },
+  { label: "Pengumuman", url: "/pengumuman" },
+  { label: "Agenda", url: "/agenda" },
+  { label: "Kontak & Pengaduan", url: "/kontak" },
 ]
 
 // ─── URL Validation ──────────────────────────────────────────────
 
 function isValidUrl(url: string, type: "INTERNAL" | "EXTERNAL"): boolean {
   if (!url.trim()) return false
+  if (url === "#") return true  // label-only menu
   if (type === "INTERNAL") {
     return url.startsWith("/")
   }
@@ -664,7 +669,7 @@ export function MenuBuilder({ items: initialItems, pages }: MenuBuilderProps) {
                   setForm((f) => ({
                     ...f,
                     type: val as "INTERNAL" | "EXTERNAL",
-                    url: "", // reset url saat ganti tipe
+                    url: val === "EXTERNAL" && f.url === "#" ? "" : val === "INTERNAL" ? "/" : f.url === "/" ? "" : f.url,
                   }))
                 }
               >
@@ -726,14 +731,32 @@ export function MenuBuilder({ items: initialItems, pages }: MenuBuilderProps) {
             ) : (
               <div className="space-y-2">
                 <Label htmlFor="menu-url">URL External</Label>
-                <Input
-                  id="menu-url"
-                  value={form.url}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, url: e.target.value }))
-                  }
-                  placeholder="https://example.com"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="menu-url"
+                    value={form.url === "#" ? "" : form.url}
+                    disabled={form.url === "#"}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, url: e.target.value }))
+                    }
+                    placeholder="https://example.com"
+                    className="flex-1"
+                  />
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="checkbox"
+                    id="no-link"
+                    checked={form.url === "#"}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, url: e.target.checked ? "#" : "" }))
+                    }
+                    className="rounded"
+                  />
+                  <label htmlFor="no-link" className="text-xs text-muted-foreground cursor-pointer">
+                    Jadikan label saja (tidak mengarah ke mana pun) — cocok untuk menu utama dengan sub-menu
+                  </label>
+                </div>
                 {formErrors.url && (
                   <p className="text-sm text-destructive">{formErrors.url}</p>
                 )}

@@ -32,7 +32,12 @@ export async function getUpcomingEvents(): Promise<SchoolEvent[]> {
   const now = new Date()
   now.setHours(0, 0, 0, 0)
   return prisma.schoolEvent.findMany({
-    where: { startDate: { gte: now } },
+    where: {
+      OR: [
+        { startDate: { gte: now } },
+        { endDate: { gte: now } },
+      ],
+    },
     orderBy: { startDate: "asc" },
     take: 5,
   })

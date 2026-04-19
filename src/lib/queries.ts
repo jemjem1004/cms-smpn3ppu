@@ -41,7 +41,7 @@ export async function getPublicMenuItems(): Promise<MenuItemWithChildren[]> {
 
 
 import { unstable_cache } from "next/cache"
-import type { SiteSettings, SiteIdentity, SiteContact, SiteSocial } from "@/types"
+import type { SiteSettings, SiteIdentity, SiteContact, SiteSocial, SiteFooter } from "@/types"
 
 // ============================================
 // Default Site Settings
@@ -60,6 +60,8 @@ const DEFAULT_CONTACT: SiteContact = {
   address: "Jl. SMKN 1 Surabaya, Kota Surabaya, Jawa Timur",
   phone: "(031) 1234567",
   email: "info@smkn1surabaya.sch.id",
+  mapsEmbedUrl: "",
+  whatsapp: "",
 }
 
 const DEFAULT_SOCIAL: SiteSocial = {
@@ -67,6 +69,10 @@ const DEFAULT_SOCIAL: SiteSocial = {
   instagram: "",
   youtube: "",
   tiktok: "",
+}
+
+const DEFAULT_FOOTER: SiteFooter = {
+  links: [],
 }
 
 // ============================================
@@ -77,7 +83,7 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
   const records = await prisma.siteSettings.findMany({
     where: {
       key: {
-        in: ["site.identity", "site.contact", "site.social"]
+        in: ["site.identity", "site.contact", "site.social", "site.footer"]
       }
     }
   })
@@ -91,6 +97,7 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     identity: (settingsMap.get("site.identity") as SiteIdentity) ?? DEFAULT_IDENTITY,
     contact: (settingsMap.get("site.contact") as SiteContact) ?? DEFAULT_CONTACT,
     social: (settingsMap.get("site.social") as SiteSocial) ?? DEFAULT_SOCIAL,
+    footer: (settingsMap.get("site.footer") as SiteFooter) ?? DEFAULT_FOOTER,
   }
 }
 

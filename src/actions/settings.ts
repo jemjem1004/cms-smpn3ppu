@@ -4,7 +4,7 @@ import { revalidateTag } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { requirePermission } from "@/lib/rbac"
 import { z } from "zod"
-import type { ActionResult, SiteIdentity, SiteContact, SiteSocial, SiteSettings } from "@/types"
+import type { ActionResult, SiteIdentity, SiteContact, SiteSocial, SiteFooter, SiteSettings } from "@/types"
 
 // ============================================
 // Validation Schemas
@@ -23,6 +23,8 @@ const contactSchema = z.object({
   address: z.string().max(500).optional().default(""),
   phone: z.string().max(50).optional().default(""),
   email: z.string().email("Email tidak valid").or(z.literal("")).optional().default(""),
+  mapsEmbedUrl: z.string().max(2000).optional().default(""),
+  whatsapp: z.string().max(20).optional().default(""),
 })
 
 const socialSchema = z.object({
@@ -49,6 +51,8 @@ const DEFAULT_CONTACT: SiteContact = {
   address: "Jl. SMKN 1 Surabaya, Kota Surabaya, Jawa Timur",
   phone: "(031) 1234567",
   email: "info@smkn1surabaya.sch.id",
+  mapsEmbedUrl: "",
+  whatsapp: "",
 }
 
 const DEFAULT_SOCIAL: SiteSocial = {
@@ -58,21 +62,28 @@ const DEFAULT_SOCIAL: SiteSocial = {
   tiktok: "",
 }
 
+const DEFAULT_FOOTER = { links: [] }
 
-// ============================================
-// Get Settings
-// ============================================
+const footerLinkSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1, "Label wajib diisi").max(100),
+  url: z.string().min(1, "URL wajib diisi").max(500),
+})
+
+const footerSchema = z.object({
+  links: z.array(footerLinkSchema),
+})
 
 /**
  * Get all site settings for admin form (bypasses cache)
  */
 export async function getSettingsForAdmin(): Promise<ActionResult<SiteSettings>> {
   try {
-    await requirePermission("menu:manage") // Only super admin
+    await requirePermission("menu:manage")
 
     const records = await prisma.siteSettings.findMany({
       where: {
-        key: { in: ["site.identity", "site.contact", "site.social"] }
+        key: { in: ["site.identity", "site.contact", "site.social", "site.footer"] }
       }
     })
 
@@ -87,6 +98,7 @@ export async function getSettingsForAdmin(): Promise<ActionResult<SiteSettings>>
         identity: (settingsMap.get("site.identity") as SiteIdentity) ?? DEFAULT_IDENTITY,
         contact: (settingsMap.get("site.contact") as SiteContact) ?? DEFAULT_CONTACT,
         social: (settingsMap.get("site.social") as SiteSocial) ?? DEFAULT_SOCIAL,
+        footer: (settingsMap.get("site.footer") as SiteFooter) ?? DEFAULT_FOOTER,
       }
     }
   } catch (error) {
@@ -196,5 +208,39 @@ export async function updateSocial(data: SiteSocial): Promise<ActionResult<SiteS
       return { success: false, error: error.message }
     }
     return { success: false, error: "Terjadi kesalahan saat menyimpan media sosial" }
+  }
+}
+
+// ============================================
+// Update Footer
+// ============================================
+
+export async function updateFooter(data: SiteFooter): Promise<ActionResult<SiteFooter>> {
+  try {
+    await requirePermission("menu:manage")
+
+    const validated = footerSchema.safeParse(data)
+    if (!validated.success) {
+      return {
+        success: false,
+        error: "Validasi gagal",
+        fieldErrors: validated.error.flatten().fieldErrors,
+      }
+    }
+
+    await prisma.siteSettings.upsert({
+      where: { key: "site.footer" },
+      update: { value: validated.data as any },
+      create: { key: "site.footer", value: validated.data as any },
+    })
+
+    revalidateTag("site-settings")
+
+    return { success: true, data: validated.data as SiteFooter }
+  } catch (error) {
+    if (error instanceof Error) {
+      return { success: false, error: error.message }
+    }
+    return { success: false, error: "Terjadi kesalahan saat menyimpan footer" }
   }
 }
