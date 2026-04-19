@@ -11,13 +11,16 @@ export async function StaffSlider() {
   }
 
   return (
-    <section className="bg-gray-50 py-12 md:py-16">
+    <section className="bg-white py-16 md:py-24 border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#002244] border-l-4 border-[#0066CC] pl-4">
+        <div className="flex flex-col mb-12">
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
             Guru &amp; Tenaga Kependidikan
           </h2>
+          <p className="text-slate-500 mt-2 text-base">
+            Mengenal lebih dekat tim profesional kami.
+          </p>
         </div>
 
         <StaffCarousel
