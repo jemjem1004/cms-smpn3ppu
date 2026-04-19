@@ -41,6 +41,8 @@ export default async function EditPage({ params }: EditPageProps) {
         slug: article.slug,
         categoryId: article.categoryId,
         thumbnailUrl: article.thumbnailUrl,
+        metaTitle: article.metaTitle ?? null,
+        metaDesc: article.metaDesc ?? null,
         status: article.status,
       }}
       categories={categories}

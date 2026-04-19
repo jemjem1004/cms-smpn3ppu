@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { toast } from "sonner"
-import { Plus } from "lucide-react"
+import { Plus, ChevronDown, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -11,13 +11,26 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ImageUploader } from "@/components/admin/image-uploader"
 import { updateInstitutionalContent } from "@/actions/content"
-import type { HeroContent, HeroSlide, ProfileContent, PrincipalContent } from "@/types"
+import type { HeroContent, HeroSlide, ProfileContent, PrincipalContent, DepartmentContent } from "@/types"
+
+const STATIC_ROUTES = [
+  { label: "Beranda", url: "/" },
+  { label: "Berita", url: "/berita" },
+  { label: "Galeri", url: "/galeri" },
+  { label: "Pengumuman", url: "/pengumuman" },
+  { label: "Agenda", url: "/agenda" },
+]
 
 interface ContentManagerProps {
   heroContent: HeroContent | null
   profileContent: ProfileContent | null
   principalContent: PrincipalContent | null
+  departmentContent: DepartmentContent | null
+  pages: { title: string; slug: string }[]
+  articles: { title: string; slug: string }[]
 }
 
 const defaultHero: HeroContent = { slides: [] }
@@ -41,6 +54,9 @@ export function ContentManager({
   heroContent,
   profileContent,
   principalContent,
+  departmentContent,
+  pages,
+  articles,
 }: ContentManagerProps) {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
@@ -61,14 +77,15 @@ export function ContentManager({
       </div>
 
       <Tabs defaultValue="hero" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-100/70 p-1.5 rounded-2xl border border-slate-200/50">
+        <TabsList className="grid w-full grid-cols-4 bg-slate-100/70 p-1.5 rounded-2xl border border-slate-200/50">
           <TabsTrigger value="hero" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Hero Section</TabsTrigger>
           <TabsTrigger value="profil" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Profil & Video</TabsTrigger>
           <TabsTrigger value="prakata" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Prakata Kepsek</TabsTrigger>
+          <TabsTrigger value="jurusan" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Jurusan</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero">
-          <HeroTab initialData={heroContent ?? defaultHero} />
+          <HeroTab initialData={heroContent ?? defaultHero} pages={pages} articles={articles} />
         </TabsContent>
 
         <TabsContent value="profil">
@@ -77,6 +94,10 @@ export function ContentManager({
 
         <TabsContent value="prakata">
           <PrakataTab initialData={principalContent ?? defaultPrincipal} />
+        </TabsContent>
+
+        <TabsContent value="jurusan">
+          <JurusanTab initialData={departmentContent} />
         </TabsContent>
       </Tabs>
     </div>
@@ -87,43 +108,53 @@ export function ContentManager({
 // Hero Section Tab — Slider
 // ============================================
 
-function HeroTab({ initialData }: { initialData: HeroContent }) {
+function HeroTab({ initialData, pages, articles }: {
+  initialData: HeroContent
+  pages: { title: string; slug: string }[]
+  articles: { title: string; slug: string }[]
+}) {
   const initialSlides: HeroSlide[] = Array.isArray(initialData.slides)
     ? initialData.slides
     : []
 
+  // Track ctaType per slide separately so switching to External with empty URL works
   const [slides, setSlides] = useState<HeroSlide[]>(initialSlides)
+  const [expandedId, setExpandedId] = useState<string | null>(initialSlides[0]?.id ?? null)
+  const [ctaTypes, setCtaTypes] = useState<Record<string, "INTERNAL" | "EXTERNAL">>(() => {
+    const map: Record<string, "INTERNAL" | "EXTERNAL"> = {}
+    initialSlides.forEach((s) => {
+      map[s.id] = s.ctaUrl.startsWith("http://") || s.ctaUrl.startsWith("https://") ? "EXTERNAL" : "INTERNAL"
+    })
+    return map
+  })
   const [saving, setSaving] = useState(false)
 
   function addSlide() {
-    if (slides.length >= 5) {
-      toast.error("Maksimal 5 slide")
-      return
-    }
-    setSlides((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        title: "",
-        description: "",
-        imageUrl: "",
-        badgeLabel: "",
-        ctaText: "Baca Lebih Lanjut",
-        ctaUrl: "/berita",
-      },
-    ])
+    if (slides.length >= 5) { toast.error("Maksimal 5 slide"); return }
+    const id = crypto.randomUUID()
+    setSlides((prev) => [...prev, { id, title: "", description: "", imageUrl: "", badgeLabel: "", ctaText: "Baca Lebih Lanjut", ctaUrl: "/berita" }])
+    setCtaTypes((prev) => ({ ...prev, [id]: "INTERNAL" }))
+    setExpandedId(id) // auto-expand slide baru
   }
 
   function removeSlide(id: string) {
-    setSlides((prev) => prev.filter((s) => s.id !== id))
+    setSlides((prev) => {
+      const next = prev.filter((s) => s.id !== id)
+      // Jika yang dihapus sedang expand, expand slide sebelumnya
+      if (expandedId === id) setExpandedId(next[next.length - 1]?.id ?? null)
+      return next
+    })
+    setCtaTypes((prev) => { const next = { ...prev }; delete next[id]; return next })
   }
 
   function updateSlide(id: string, field: keyof HeroSlide, value: string) {
-    setSlides((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, [field]: value } : s))
-    )
+    setSlides((prev) => prev.map((s) => (s.id === id ? { ...s, [field]: value } : s)))
   }
 
+  function setCtaType(id: string, type: "INTERNAL" | "EXTERNAL") {
+    setCtaTypes((prev) => ({ ...prev, [id]: type }))
+    updateSlide(id, "ctaUrl", type === "INTERNAL" ? "/" : "https://")
+  }
   async function handleSave() {
     setSaving(true)
     try {
@@ -161,80 +192,171 @@ function HeroTab({ initialData }: { initialData: HeroContent }) {
           </div>
         )}
 
-        {slides.map((slide, index) => (
-          <div key={slide.id} className="rounded-2xl border border-slate-200/60 bg-slate-50/30 p-5 space-y-4 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
-              <span className="text-sm font-bold text-[#002244]">Slide #{index + 1}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive hover:bg-red-50 rounded-lg h-8"
-                onClick={() => removeSlide(slide.id)}
+        {slides.map((slide, index) => {
+          const isOpen = expandedId === slide.id
+          const hasTitle = slide.title.trim()
+          return (
+            <div key={slide.id} className={`rounded-2xl border transition-all ${isOpen ? "border-[#002244]/30 shadow-md" : "border-slate-200 shadow-sm"}`}>
+              {/* Accordion Header — always visible */}
+              <div
+                onClick={() => setExpandedId(isOpen ? null : slide.id)}
+                className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-slate-50/80 rounded-2xl transition-colors cursor-pointer"
               >
-                Hapus Slide
-              </Button>
-            </div>
+                {/* Slide thumbnail preview */}
+                <div className="w-12 h-8 rounded-md overflow-hidden bg-slate-200 shrink-0 border border-slate-200">
+                  {slide.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={slide.imageUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImageIcon className="h-3 w-3 text-slate-400" />
+                    </div>
+                  )}
+                </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Judul</Label>
-                <Input
-                  placeholder="Judul slide"
-                  value={slide.title}
-                  onChange={(e) => updateSlide(slide.id, "title", e.target.value)}
-                />
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Slide {index + 1}</span>
+                  <p className="text-sm font-semibold text-slate-800 truncate">
+                    {hasTitle ? slide.title : <span className="text-slate-400 italic">Belum ada judul</span>}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive hover:bg-red-50 rounded-lg h-7 px-2 text-xs"
+                    onClick={(e) => { e.stopPropagation(); removeSlide(slide.id) }}
+                  >
+                    Hapus
+                  </Button>
+                  <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Label Badge</Label>
-                <Input
-                  placeholder="Contoh: Prestasi Siswa"
-                  value={slide.badgeLabel}
-                  onChange={(e) => updateSlide(slide.id, "badgeLabel", e.target.value)}
-                />
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Deskripsi</Label>
-              <Textarea
-                placeholder="Deskripsi singkat slide"
-                rows={2}
-                value={slide.description}
-                onChange={(e) => updateSlide(slide.id, "description", e.target.value)}
-              />
-            </div>
+              {/* Accordion Body — collapsible */}
+              {isOpen && (
+                <div className="px-5 pb-5 space-y-4 border-t border-slate-100">
+                  <div className="pt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Judul</Label>
+                      <Input
+                        placeholder="Judul slide"
+                        value={slide.title}
+                        onChange={(e) => updateSlide(slide.id, "title", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Label Badge</Label>
+                      <Input
+                        placeholder="Contoh: Prestasi Siswa"
+                        value={slide.badgeLabel}
+                        onChange={(e) => updateSlide(slide.id, "badgeLabel", e.target.value)}
+                      />
+                    </div>
+                  </div>
 
-            <div className="space-y-2">
-              <Label>URL Gambar</Label>
-              <Input
-                placeholder="https://example.com/image.jpg atau URL S3"
-                value={slide.imageUrl}
-                onChange={(e) => updateSlide(slide.id, "imageUrl", e.target.value)}
-              />
-            </div>
+                  <div className="space-y-2">
+                    <Label>Deskripsi</Label>
+                    <Textarea
+                      placeholder="Deskripsi singkat slide"
+                      rows={2}
+                      value={slide.description}
+                      onChange={(e) => updateSlide(slide.id, "description", e.target.value)}
+                    />
+                  </div>
 
-            <Separator />
+                  <div className="space-y-2">
+                    <Label>Gambar Slide</Label>
+                    <ImageUploader
+                      currentImageUrl={slide.imageUrl || undefined}
+                      onUploadComplete={(url) => updateSlide(slide.id, "imageUrl", url)}
+                      maxSizeMB={5}
+                    />
+                  </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Teks Tombol</Label>
-                <Input
-                  placeholder="Baca Lebih Lanjut"
-                  value={slide.ctaText}
-                  onChange={(e) => updateSlide(slide.id, "ctaText", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>URL Tombol</Label>
-                <Input
-                  placeholder="/berita/slug-artikel"
-                  value={slide.ctaUrl}
-                  onChange={(e) => updateSlide(slide.id, "ctaUrl", e.target.value)}
-                />
-              </div>
+                  <Separator />
+
+                  <div className="space-y-3">
+                    <Label>Tombol CTA</Label>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Teks Tombol</Label>
+                        <Input
+                          placeholder="Baca Lebih Lanjut"
+                          value={slide.ctaText}
+                          onChange={(e) => updateSlide(slide.id, "ctaText", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Tipe Link</Label>
+                        <Select
+                          value={ctaTypes[slide.id] ?? "INTERNAL"}
+                          onValueChange={(val) => setCtaType(slide.id, val as "INTERNAL" | "EXTERNAL")}
+                        >
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="INTERNAL">Internal (halaman website)</SelectItem>
+                            <SelectItem value="EXTERNAL">External (link luar)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {ctaTypes[slide.id] === "EXTERNAL" ? (
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">URL External</Label>
+                        <Input
+                          placeholder="https://example.com"
+                          value={slide.ctaUrl}
+                          onChange={(e) => updateSlide(slide.id, "ctaUrl", e.target.value)}
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Tujuan Halaman</Label>
+                        <Select value={slide.ctaUrl} onValueChange={(val) => updateSlide(slide.id, "ctaUrl", val)}>
+                          <SelectTrigger><SelectValue placeholder="Pilih halaman..." /></SelectTrigger>
+                          <SelectContent>
+                            <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">Rute Tetap</div>
+                            {STATIC_ROUTES.map((r) => (
+                              <SelectItem key={r.url} value={r.url}>
+                                {r.label} <span className="text-xs text-muted-foreground ml-1">{r.url}</span>
+                              </SelectItem>
+                            ))}
+                            {articles.length > 0 && (
+                              <>
+                                <Separator className="my-1" />
+                                <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">Artikel Berita</div>
+                                {articles.map((a) => (
+                                  <SelectItem key={a.slug} value={`/berita/${a.slug}`}>{a.title}</SelectItem>
+                                ))}
+                              </>
+                            )}
+                            {pages.length > 0 && (
+                              <>
+                                <Separator className="my-1" />
+                                <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">Halaman Kustom</div>
+                                {pages.map((p) => (
+                                  <SelectItem key={p.slug} value={`/halaman/${p.slug}`}>{p.title}</SelectItem>
+                                ))}
+                              </>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        {slide.ctaUrl && (
+                          <p className="text-xs text-muted-foreground">
+                            URL: <code className="bg-muted px-1 rounded">{slide.ctaUrl}</code>
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
 
         {slides.length > 0 && (
           <div className="flex justify-end pt-4">
@@ -403,12 +525,11 @@ function PrakataTab({ initialData }: { initialData: PrincipalContent }) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="prakata-photoUrl">URL Foto</Label>
-          <Input
-            id="prakata-photoUrl"
-            placeholder="https://example.com/foto.jpg atau URL S3"
-            value={data.photoUrl}
-            onChange={(e) => update("photoUrl", e.target.value)}
+          <Label htmlFor="prakata-photoUrl">Foto Kepala Sekolah</Label>
+          <ImageUploader
+            currentImageUrl={data.photoUrl || undefined}
+            onUploadComplete={(url) => update("photoUrl", url)}
+            maxSizeMB={3}
           />
           <p className="text-xs text-muted-foreground">
             Foto ditampilkan dalam lingkaran dengan border kuning dan efek grayscale.
@@ -420,6 +541,136 @@ function PrakataTab({ initialData }: { initialData: PrincipalContent }) {
             {saving ? "Menyimpan..." : "Simpan Prakata"}
           </Button>
         </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ============================================
+// Jurusan Tab — Department Content
+// ============================================
+
+interface Department {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+}
+
+const defaultDepartment: DepartmentContent = { departments: [] }
+
+function JurusanTab({ initialData }: { initialData: DepartmentContent | null }) {
+  const [departments, setDepartments] = useState<Department[]>(
+    initialData?.departments ?? []
+  )
+  const [saving, setSaving] = useState(false)
+
+  function addDepartment() {
+    setDepartments((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), name: "", description: "", imageUrl: "" },
+    ])
+  }
+
+  function removeDepartment(id: string) {
+    setDepartments((prev) => prev.filter((d) => d.id !== id))
+  }
+
+  function updateDepartment(id: string, field: keyof Department, value: string) {
+    setDepartments((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, [field]: value } : d))
+    )
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    try {
+      const result = await updateInstitutionalContent("DEPARTMENT", { departments })
+      if (result.success) {
+        toast.success("Data jurusan berhasil disimpan")
+      } else {
+        toast.error(result.error || "Gagal menyimpan data jurusan")
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat menyimpan")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div>
+          <CardTitle>Jurusan / Program Keahlian</CardTitle>
+          <CardDescription className="mt-1">
+            Daftar jurusan atau program keahlian yang ditawarkan sekolah.
+          </CardDescription>
+        </div>
+        <Button onClick={addDepartment} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-md transition-all active:scale-95">
+          <Plus className="mr-2 h-4 w-4" /> Tambah Jurusan
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {departments.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-slate-500 bg-slate-50/50">
+            <p className="font-medium">Belum ada jurusan.</p>
+            <p className="text-sm mt-1 text-slate-400">Klik &quot;Tambah Jurusan&quot; untuk menambahkan program keahlian.</p>
+          </div>
+        )}
+
+        {departments.map((dept, index) => (
+          <div key={dept.id} className="rounded-2xl border border-slate-200/60 bg-slate-50/30 p-5 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
+              <span className="text-sm font-bold text-[#002244]">Jurusan #{index + 1}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive hover:bg-red-50 rounded-lg h-8"
+                onClick={() => removeDepartment(dept.id)}
+              >
+                Hapus
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Nama Jurusan</Label>
+                <Input
+                  placeholder="Teknik Komputer dan Jaringan"
+                  value={dept.name}
+                  onChange={(e) => updateDepartment(dept.id, "name", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Gambar Jurusan</Label>
+                <ImageUploader
+                  currentImageUrl={dept.imageUrl || undefined}
+                  onUploadComplete={(url) => updateDepartment(dept.id, "imageUrl", url)}
+                  maxSizeMB={3}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Deskripsi</Label>
+              <Textarea
+                placeholder="Deskripsi singkat program keahlian..."
+                rows={2}
+                value={dept.description}
+                onChange={(e) => updateDepartment(dept.id, "description", e.target.value)}
+              />
+            </div>
+          </div>
+        ))}
+
+        {departments.length > 0 && (
+          <div className="flex justify-end pt-4">
+            <Button onClick={handleSave} disabled={saving} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all hover:-translate-y-0.5 px-6">
+              {saving ? "Menyimpan..." : "Simpan Data Jurusan"}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

@@ -78,12 +78,12 @@ export const principalContentSchema = z.object({
 const departmentItemSchema = z.object({
   id: z.string().min(1, "ID jurusan wajib diisi"),
   name: z.string().min(1, "Nama jurusan wajib diisi"),
-  description: z.string().min(1, "Deskripsi jurusan wajib diisi"),
-  imageUrl: z.string().min(1, "URL gambar jurusan wajib diisi"),
+  description: z.string().optional().default(""),
+  imageUrl: z.string().optional().default(""),
 })
 
 export const departmentContentSchema = z.object({
-  departments: z.array(departmentItemSchema).min(1, "Minimal satu jurusan harus diisi"),
+  departments: z.array(departmentItemSchema),
 })
 
 export const contentSectionSchemas = {

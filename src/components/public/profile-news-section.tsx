@@ -1,11 +1,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { getSiteSettings } from "@/lib/queries"
 import type { ProfileContent } from "@/types"
 
 const DEFAULT_PROFILE: ProfileContent = {
   description:
-    "SMKN 1 Surabaya adalah sekolah menengah kejuruan negeri yang berkomitmen mencetak lulusan berkualitas dan siap kerja.",
+    "Profil sekolah.",
   videoUrl: "",
   visi: "",
   misi: "",
@@ -43,7 +44,7 @@ function getYouTubeEmbedUrl(url: string): string | null {
 }
 
 export async function ProfileNewsSection() {
-  const [profileRecord, latestArticles] = await Promise.all([
+  const [profileRecord, latestArticles, siteSettings] = await Promise.all([
     prisma.institutionalContent.findUnique({ where: { section: "PROFILE" } }),
     prisma.article.findMany({
       where: { status: "PUBLISHED", isDeleted: false },
@@ -57,6 +58,7 @@ export async function ProfileNewsSection() {
         publishedAt: true,
       },
     }),
+    getSiteSettings(),
   ])
 
 
@@ -65,6 +67,7 @@ export async function ProfileNewsSection() {
     : DEFAULT_PROFILE
 
   const embedUrl = getYouTubeEmbedUrl(profile.videoUrl)
+  const schoolName = siteSettings?.identity?.name || "Sekolah Kami"
 
   return (
     <section className="bg-white py-16 md:py-24 border-b border-slate-100">
@@ -74,7 +77,7 @@ export async function ProfileNewsSection() {
           <div className="w-full lg:w-7/12">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-6 tracking-tight flex items-center gap-3">
               <span className="w-2 h-8 bg-[#005b9f] block rounded-sm"></span>
-              Profil SMK Negeri 1 Surabaya
+              Profil {schoolName}
             </h2>
 
             {/* Video */}
@@ -83,7 +86,7 @@ export async function ProfileNewsSection() {
                 <div className="relative aspect-video rounded-md overflow-hidden shadow-md mb-6 bg-slate-900 border border-slate-200">
                   <iframe
                     src={embedUrl}
-                    title="Profil SMK Negeri 1 Surabaya"
+                    title={`Profil ${schoolName}`}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     className="absolute inset-0 w-full h-full"

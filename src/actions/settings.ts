@@ -16,6 +16,7 @@ const identitySchema = z.object({
   tagline: z.string().max(100).optional().default(""),
   description: z.string().max(1000).optional().default(""),
   logoUrl: z.string().url("URL logo tidak valid").or(z.literal("")).optional().default(""),
+  faviconUrl: z.string().url("URL favicon tidak valid").or(z.literal("")).optional().default(""),
 })
 
 const contactSchema = z.object({
@@ -41,6 +42,7 @@ const DEFAULT_IDENTITY: SiteIdentity = {
   tagline: "Surabaya",
   description: "SMK Negeri 1 Surabaya adalah sekolah menengah kejuruan unggulan yang berkomitmen mencetak lulusan berkompeten dan siap kerja.",
   logoUrl: "",
+  faviconUrl: "",
 }
 
 const DEFAULT_CONTACT: SiteContact = {

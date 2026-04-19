@@ -66,6 +66,7 @@ interface LocalMenuItem {
 
 interface MenuBuilderProps {
   items: MenuItemWithChildren[]
+  pages: { title: string; slug: string }[]
 }
 
 interface FormState {
@@ -171,6 +172,14 @@ function SortableMenuItem({
   )
 }
 
+// ─── Static internal routes ─────────────────────────────────────
+
+const STATIC_ROUTES = [
+  { label: "Beranda", url: "/" },
+  { label: "Berita", url: "/berita" },
+  { label: "Galeri", url: "/galeri" },
+]
+
 // ─── URL Validation ──────────────────────────────────────────────
 
 function isValidUrl(url: string, type: "INTERNAL" | "EXTERNAL"): boolean {
@@ -188,7 +197,7 @@ function isValidUrl(url: string, type: "INTERNAL" | "EXTERNAL"): boolean {
 
 // ─── Main Component ──────────────────────────────────────────────
 
-export function MenuBuilder({ items: initialItems }: MenuBuilderProps) {
+export function MenuBuilder({ items: initialItems, pages }: MenuBuilderProps) {
   const [menuItems, setMenuItems] = useState<LocalMenuItem[]>(() =>
     initialItems.map((item) => ({
       id: item.id,
@@ -646,25 +655,7 @@ export function MenuBuilder({ items: initialItems }: MenuBuilderProps) {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="menu-url">URL</Label>
-              <Input
-                id="menu-url"
-                value={form.url}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, url: e.target.value }))
-                }
-                placeholder={
-                  form.type === "INTERNAL"
-                    ? "/tentang-kami"
-                    : "https://example.com"
-                }
-              />
-              {formErrors.url && (
-                <p className="text-sm text-destructive">{formErrors.url}</p>
-              )}
-            </div>
-
+            {/* Tipe dulu, baru URL/pilihan halaman */}
             <div className="space-y-2">
               <Label htmlFor="menu-type">Tipe</Label>
               <Select
@@ -673,6 +664,7 @@ export function MenuBuilder({ items: initialItems }: MenuBuilderProps) {
                   setForm((f) => ({
                     ...f,
                     type: val as "INTERNAL" | "EXTERNAL",
+                    url: "", // reset url saat ganti tipe
                   }))
                 }
               >
@@ -680,11 +672,73 @@ export function MenuBuilder({ items: initialItems }: MenuBuilderProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="INTERNAL">Internal</SelectItem>
-                  <SelectItem value="EXTERNAL">External</SelectItem>
+                  <SelectItem value="INTERNAL">Internal (halaman website)</SelectItem>
+                  <SelectItem value="EXTERNAL">External (link luar)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {form.type === "INTERNAL" ? (
+              <div className="space-y-2">
+                <Label htmlFor="menu-page">Tujuan Halaman</Label>
+                <Select
+                  value={form.url}
+                  onValueChange={(val) => setForm((f) => ({ ...f, url: val }))}
+                >
+                  <SelectTrigger id="menu-page">
+                    <SelectValue placeholder="Pilih halaman..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">
+                      Rute Tetap
+                    </div>
+                    {STATIC_ROUTES.map((r) => (
+                      <SelectItem key={r.url} value={r.url}>
+                        {r.label}
+                        <span className="ml-2 text-xs text-muted-foreground">{r.url}</span>
+                      </SelectItem>
+                    ))}
+                    {pages.length > 0 && (
+                      <>
+                        <Separator className="my-1" />
+                        <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">
+                          Halaman Kustom
+                        </div>
+                        {pages.map((p) => (
+                          <SelectItem key={p.slug} value={`/halaman/${p.slug}`}>
+                            {p.title}
+                            <span className="ml-2 text-xs text-muted-foreground">/halaman/{p.slug}</span>
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+                {form.url && (
+                  <p className="text-xs text-muted-foreground">
+                    URL: <code className="bg-muted px-1 rounded">{form.url}</code>
+                  </p>
+                )}
+                {formErrors.url && (
+                  <p className="text-sm text-destructive">{formErrors.url}</p>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="menu-url">URL External</Label>
+                <Input
+                  id="menu-url"
+                  value={form.url}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, url: e.target.value }))
+                  }
+                  placeholder="https://example.com"
+                />
+                {formErrors.url && (
+                  <p className="text-sm text-destructive">{formErrors.url}</p>
+                )}
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="menu-parent">Parent</Label>

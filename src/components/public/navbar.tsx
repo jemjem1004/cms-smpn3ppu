@@ -55,20 +55,22 @@ export async function Navbar() {
                         {item.label}
                         <ChevronDown className="h-3.5 w-3.5 opacity-70 group-hover:opacity-100 transition-transform group-hover:rotate-180" />
                       </button>
-                      <ul className="absolute left-0 top-full mt-2 hidden group-hover:block bg-white border border-slate-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] min-w-[220px] py-2 z-50 transform origin-top-left transition-all">
-                        {item.children.map((child) => (
-                           <li key={child.id}>
-                            <Link
-                              href={child.url}
-                              className="block px-5 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-slate-50 font-medium transition-colors"
-                              target={child.type === "EXTERNAL" ? "_blank" : undefined}
-                              rel={child.type === "EXTERNAL" ? "noopener noreferrer" : undefined}
-                            >
-                              {child.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
+                        <ul className="bg-white border border-slate-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] min-w-[220px] py-2.5 transform origin-top-left animate-in fade-in slide-in-from-top-2 duration-200">
+                          {item.children.map((child) => (
+                             <li key={child.id}>
+                              <Link
+                                href={child.url}
+                                className="block px-5 py-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-slate-50 font-medium transition-colors"
+                                target={child.type === "EXTERNAL" ? "_blank" : undefined}
+                                rel={child.type === "EXTERNAL" ? "noopener noreferrer" : undefined}
+                              >
+                                {child.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </>
                   ) : (
                     <Link

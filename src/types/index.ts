@@ -124,6 +124,7 @@ export interface SiteIdentity {
   tagline: string
   description: string
   logoUrl: string
+  faviconUrl: string
 }
 
 export interface SiteContact {

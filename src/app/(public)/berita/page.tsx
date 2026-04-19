@@ -4,17 +4,8 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 
 export const metadata: Metadata = {
-  title: "Berita — SMKN 1 Surabaya",
-  description:
-    "Kumpulan berita dan artikel terbaru dari SMKN 1 Surabaya. Informasi kegiatan, prestasi, dan perkembangan sekolah.",
-  openGraph: {
-    title: "Berita — SMKN 1 Surabaya",
-    description:
-      "Kumpulan berita dan artikel terbaru dari SMKN 1 Surabaya.",
-    type: "website",
-    locale: "id_ID",
-    siteName: "SMKN 1 Surabaya",
-  },
+  title: "Berita",
+  description: "Kumpulan berita dan artikel terbaru dari sekolah.",
 }
 
 const ARTICLES_PER_PAGE = 12
@@ -67,7 +58,7 @@ export default async function BeritaPage({
             Berita &amp; Artikel
           </h1>
           <p className="mt-2 text-gray-500">
-            Informasi terbaru seputar kegiatan dan perkembangan SMKN 1 Surabaya
+            Informasi terbaru seputar kegiatan dan perkembangan sekolah
           </p>
         </div>
 

@@ -8,6 +8,8 @@ import { ArrowLeft, Save, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
 import { ArticleEditor } from "@/components/admin/article-editor"
 import { createPage, updatePage } from "@/actions/page"
 
@@ -19,6 +21,8 @@ interface PageFormProps {
     slug: string
     content: string
     isPublished: boolean
+    metaTitle: string | null
+    metaDesc: string | null
   }
 }
 
@@ -40,6 +44,8 @@ export function PageForm({ mode, pageId, initialData }: PageFormProps) {
   const [slug, setSlug] = useState(initialData?.slug ?? "")
   const [slugManual, setSlugManual] = useState(false)
   const [content, setContent] = useState(initialData?.content ?? "")
+  const [metaTitle, setMetaTitle] = useState(initialData?.metaTitle ?? "")
+  const [metaDesc, setMetaDesc] = useState(initialData?.metaDesc ?? "")
   const [errors, setErrors] = useState<Record<string, string[]>>({})
 
   function handleTitleChange(value: string) {
@@ -50,7 +56,7 @@ export function PageForm({ mode, pageId, initialData }: PageFormProps) {
   function handleSave(publish = false) {
     setErrors({})
     startTransition(async () => {
-      const data = { title, slug: slug || undefined, content, isPublished: publish }
+      const data = { title, slug: slug || undefined, content, isPublished: publish, metaTitle: metaTitle || undefined, metaDesc: metaDesc || undefined }
 
       let result
       if (mode === "create") {
@@ -160,6 +166,38 @@ export function PageForm({ mode, pageId, initialData }: PageFormProps) {
               <li>Pilih tipe: Internal</li>
               <li>Simpan menu</li>
             </ol>
+          </div>
+
+          <Separator />
+
+          <div className="rounded-lg border p-4 space-y-3">
+            <div>
+              <h3 className="font-semibold text-sm">SEO</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Kosongkan untuk menggunakan judul halaman</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="metaTitle" className="text-xs">Meta Title</Label>
+              <Input
+                id="metaTitle"
+                placeholder={title || "Judul halaman"}
+                value={metaTitle}
+                onChange={(e) => setMetaTitle(e.target.value)}
+                maxLength={60}
+              />
+              <p className="text-xs text-muted-foreground text-right">{metaTitle.length}/60</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="metaDesc" className="text-xs">Meta Description</Label>
+              <Textarea
+                id="metaDesc"
+                placeholder="Deskripsi singkat untuk mesin pencari..."
+                value={metaDesc}
+                onChange={(e) => setMetaDesc(e.target.value)}
+                rows={3}
+                maxLength={160}
+              />
+              <p className="text-xs text-muted-foreground text-right">{metaDesc.length}/160</p>
+            </div>
           </div>
         </div>
       </div>

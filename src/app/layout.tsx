@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { getSiteSettings } from "@/lib/queries";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,10 +15,27 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "CMS SMKN 1 Surabaya",
-  description: "Sistem Manajemen Konten SMKN 1 Surabaya",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  const { identity } = settings
+
+  return {
+    title: {
+      default: identity.name,
+      template: `%s — ${identity.shortName}`,
+    },
+    description: identity.description,
+    icons: identity.faviconUrl
+      ? {
+          icon: [{ url: identity.faviconUrl }],
+          shortcut: identity.faviconUrl,
+          apple: identity.faviconUrl,
+        }
+      : {
+          icon: "/icon.png",
+        },
+  }
+}
 
 export default function RootLayout({
   children,

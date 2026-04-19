@@ -71,6 +71,8 @@ export async function createArticle(data: {
   slug?: string
   categoryId?: string
   thumbnailUrl?: string
+  metaTitle?: string
+  metaDesc?: string
   status?: "DRAFT" | "PUBLISHED"
 }): Promise<ActionResult<Article>> {
   try {
@@ -89,6 +91,8 @@ export async function createArticle(data: {
         content: validated.data.content,
         slug: validated.data.slug,
         thumbnailUrl: validated.data.thumbnailUrl ?? null,
+        metaTitle: data.metaTitle || null,
+        metaDesc: data.metaDesc || null,
         status: articleStatus,
         authorId: session.user.id,
         categoryId: validated.data.categoryId ?? null,
@@ -114,6 +118,8 @@ export async function updateArticle(id: string, data: {
   slug?: string
   categoryId?: string
   thumbnailUrl?: string
+  metaTitle?: string
+  metaDesc?: string
 }): Promise<ActionResult<Article>> {
   try {
     await requirePermission("article:edit")
@@ -131,6 +137,8 @@ export async function updateArticle(id: string, data: {
         content: validated.data.content,
         slug: validated.data.slug,
         thumbnailUrl: validated.data.thumbnailUrl ?? null,
+        metaTitle: data.metaTitle || null,
+        metaDesc: data.metaDesc || null,
         categoryId: validated.data.categoryId ?? null,
       },
     })

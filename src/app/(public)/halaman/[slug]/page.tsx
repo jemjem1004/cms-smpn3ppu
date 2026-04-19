@@ -8,14 +8,19 @@ export async function generateMetadata({
   params: { slug: string }
 }): Promise<Metadata> {
   const page = await getPageBySlug(params.slug)
-  if (!page) return { title: "Halaman Tidak Ditemukan — SMKN 1 Surabaya" }
+  if (!page) return { title: "Halaman Tidak Ditemukan" }
+
+  const title = page.metaTitle || page.title
+  const description = page.metaDesc || undefined
+
   return {
-    title: `${page.title} — SMKN 1 Surabaya`,
+    title,
+    description,
     openGraph: {
-      title: page.title,
+      title,
+      description,
       type: "website",
       locale: "id_ID",
-      siteName: "SMKN 1 Surabaya",
     },
   }
 }
@@ -33,20 +38,40 @@ export default async function PublicPageDetail({
 
   return (
     <article className="bg-white min-h-screen">
-      {/* Page header */}
-      <div className="bg-[#002244] text-white py-10">
+      
+      {/* Minimalist Title Bar */}
+      <header className="bg-[#002244] relative pt-10 pb-10 md:pt-12 md:pb-12 border-b-[3px] border-yellow-400">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl md:text-4xl font-bold">{page.title}</h1>
+          <nav aria-label="Breadcrumb" className="text-blue-300/60 text-xs font-bold tracking-widest uppercase mb-3">
+            <a href="/" className="hover:text-white transition-colors">Beranda</a> 
+            <span className="mx-2 opacity-40">/</span> 
+            <span className="text-blue-200/80">Halaman</span>
+          </nav>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-snug">
+            {page.title}
+          </h1>
         </div>
-      </div>
+      </header>
 
-      {/* Page content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+      {/* General Purpose Content Area */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         <div
-          className="prose prose-lg max-w-none prose-headings:text-[#002244] prose-a:text-blue-600 prose-img:rounded-lg"
+          className={`
+            prose prose-lg max-w-none 
+            prose-headings:font-bold prose-headings:text-[#002244]
+            prose-h2:mt-10 prose-h2:mb-4 prose-h2:text-2xl
+            prose-h3:text-xl
+            prose-p:text-slate-700 prose-p:leading-relaxed prose-p:mb-6
+            prose-a:text-blue-600 prose-a:font-semibold hover:prose-a:text-blue-700 hover:prose-a:underline
+            prose-img:rounded-xl prose-img:shadow-sm prose-img:my-8 prose-img:w-full prose-img:border border-slate-100
+            prose-blockquote:border-l-4 prose-blockquote:border-[#002244] prose-blockquote:bg-slate-50 prose-blockquote:pl-5 prose-blockquote:py-3 prose-blockquote:my-8 prose-blockquote:text-slate-700 prose-blockquote:not-italic
+            prose-li:text-slate-700 prose-ul:my-6 prose-ul:space-y-2 prose-li:marker:text-slate-400
+            prose-hr:border-slate-200 prose-hr:my-10
+          `}
           dangerouslySetInnerHTML={{ __html: page.content }}
         />
       </div>
+
     </article>
   )
 }

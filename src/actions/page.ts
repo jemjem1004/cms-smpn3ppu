@@ -44,6 +44,15 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
   return prisma.page.findUnique({ where: { slug, isPublished: true } })
 }
 
+export async function getPagesForMenu(): Promise<{ title: string; slug: string }[]> {
+  const pages = await prisma.page.findMany({
+    where: { isPublished: true },
+    select: { title: true, slug: true },
+    orderBy: [{ order: "asc" }, { title: "asc" }],
+  })
+  return pages
+}
+
 export async function getPageById(id: string): Promise<ActionResult<Page | null>> {
   try {
     await requirePermission("page:manage")
@@ -60,6 +69,8 @@ export async function createPage(data: {
   slug?: string
   content: string
   isPublished?: boolean
+  metaTitle?: string
+  metaDesc?: string
 }): Promise<ActionResult<Page>> {
   try {
     await requirePermission("page:manage")
@@ -84,6 +95,8 @@ export async function createPage(data: {
         slug: validated.data.slug,
         content: validated.data.content,
         isPublished: validated.data.isPublished ?? false,
+        metaTitle: data.metaTitle || null,
+        metaDesc: data.metaDesc || null,
         order: nextOrder,
       },
     })
@@ -103,7 +116,7 @@ export async function createPage(data: {
 
 export async function updatePage(
   id: string,
-  data: { title: string; slug?: string; content: string; isPublished?: boolean }
+  data: { title: string; slug?: string; content: string; isPublished?: boolean; metaTitle?: string; metaDesc?: string }
 ): Promise<ActionResult<Page>> {
   try {
     await requirePermission("page:manage")
@@ -126,6 +139,8 @@ export async function updatePage(
         slug: validated.data.slug,
         content: validated.data.content,
         isPublished: validated.data.isPublished ?? false,
+        metaTitle: data.metaTitle || null,
+        metaDesc: data.metaDesc || null,
       },
     })
 

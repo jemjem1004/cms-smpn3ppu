@@ -15,6 +15,7 @@ import {
   PanelLeft,
   BookOpen,
   Settings,
+  Megaphone,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -50,6 +51,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Halaman", href: "/admin/halaman", icon: BookOpen, permission: "page:manage" },
   { label: "Konten", href: "/admin/konten", icon: FileText, permission: "content:manage" },
   { label: "Berita", href: "/admin/berita", icon: Newspaper, permission: "article:create" },
+  { label: "Pengumuman", href: "/admin/pengumuman", icon: Megaphone, permission: "content:manage" },
   { label: "Galeri", href: "/admin/galeri", icon: Image, permission: "gallery:manage" },
   { label: "Guru & Tendik", href: "/admin/guru", icon: GraduationCap, permission: "staff:manage" },
   { label: "Pengguna", href: "/admin/pengguna", icon: Users, permission: "user:manage" },

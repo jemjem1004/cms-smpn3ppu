@@ -170,6 +170,40 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                </div>
             </div>
 
+            <div className="pt-4 border-t border-slate-100 space-y-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Favicon</h2>
+                <p className="text-xs text-slate-400 font-medium mt-1">Ikon kecil yang tampil di tab browser. Gunakan gambar persegi (1:1).</p>
+              </div>
+              <div className="p-4 bg-slate-50/50 border border-slate-200/60 rounded-2xl">
+                <div className="flex items-start gap-6">
+                  <div className="shrink-0 flex flex-col items-center gap-2">
+                    <div className="w-16 h-16 rounded-xl border-2 border-slate-200 bg-white flex items-center justify-center overflow-hidden shadow-sm">
+                      {identity.faviconUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={identity.faviconUrl} alt="Favicon preview" className="w-10 h-10 object-contain" />
+                      ) : (
+                        <span className="text-2xl">🏫</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-400">Preview</p>
+                  </div>
+                  <div className="flex-1">
+                    <ImageUploader
+                      onUploadComplete={(url) => setIdentity({ ...identity, faviconUrl: url })}
+                      currentImageUrl={identity.faviconUrl || undefined}
+                      maxSizeMB={1}
+                      acceptedFormats={["image/png", "image/jpeg", "image/webp"]}
+                    />
+                    <p className="text-xs text-slate-400 font-medium mt-2">
+                      Rekomendasi: PNG persegi, ukuran 32x32px atau 64x64px.
+                    </p>
+                    {identityErrors.faviconUrl && <p className="text-sm text-destructive font-medium mt-1">{identityErrors.faviconUrl[0]}</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="flex justify-end pt-4 border-t border-slate-100">
               <Button onClick={handleSaveIdentity} disabled={isPending} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-md transition-all active:scale-95 px-8 font-semibold h-11">
                 <Save className="mr-2 h-4 w-4" />

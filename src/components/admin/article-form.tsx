@@ -9,6 +9,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
 import {
   Select,
   SelectContent,
@@ -35,6 +37,8 @@ interface ArticleFormProps {
     slug: string
     categoryId: string | null
     thumbnailUrl: string | null
+    metaTitle: string | null
+    metaDesc: string | null
     status: "DRAFT" | "PUBLISHED"
   }
   categories: Category[]
@@ -67,6 +71,8 @@ export function ArticleForm({
   const [content, setContent] = useState(initialData?.content ?? "")
   const [categoryId, setCategoryId] = useState(initialData?.categoryId ?? "")
   const [thumbnailUrl, setThumbnailUrl] = useState(initialData?.thumbnailUrl ?? "")
+  const [metaTitle, setMetaTitle] = useState(initialData?.metaTitle ?? "")
+  const [metaDesc, setMetaDesc] = useState(initialData?.metaDesc ?? "")
   const [errors, setErrors] = useState<Record<string, string[]>>({})
 
   function handleTitleChange(value: string) {
@@ -86,6 +92,8 @@ export function ArticleForm({
         slug: slug || undefined,
         categoryId: categoryId || undefined,
         thumbnailUrl: thumbnailUrl || undefined,
+        metaTitle: metaTitle || undefined,
+        metaDesc: metaDesc || undefined,
       }
 
       if (mode === "create") {
@@ -223,6 +231,39 @@ export function ArticleForm({
               onUploadComplete={(url) => setThumbnailUrl(url)}
               currentImageUrl={thumbnailUrl || undefined}
             />
+          </div>
+
+          <Separator />
+
+          {/* SEO */}
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-semibold">SEO</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Kosongkan untuk menggunakan judul & konten artikel</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="metaTitle" className="text-xs">Meta Title</Label>
+              <Input
+                id="metaTitle"
+                placeholder={title || "Judul artikel"}
+                value={metaTitle}
+                onChange={(e) => setMetaTitle(e.target.value)}
+                maxLength={60}
+              />
+              <p className="text-xs text-muted-foreground text-right">{metaTitle.length}/60</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="metaDesc" className="text-xs">Meta Description</Label>
+              <Textarea
+                id="metaDesc"
+                placeholder="Deskripsi singkat untuk mesin pencari..."
+                value={metaDesc}
+                onChange={(e) => setMetaDesc(e.target.value)}
+                rows={3}
+                maxLength={160}
+              />
+              <p className="text-xs text-muted-foreground text-right">{metaDesc.length}/160</p>
+            </div>
           </div>
         </div>
       </div>

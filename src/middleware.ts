@@ -10,11 +10,13 @@ const { auth } = NextAuth(authConfig)
 const ROUTE_PERMISSIONS: Record<string, string[]> = {
   "/admin/menu": ["SUPER_ADMIN"],
   "/admin/pengguna": ["SUPER_ADMIN"],
+  "/admin/pengaturan": ["SUPER_ADMIN"],
   "/admin/konten": ["SUPER_ADMIN", "EDITOR"],
   "/admin/galeri": ["SUPER_ADMIN", "EDITOR"],
   "/admin/guru": ["SUPER_ADMIN", "EDITOR"],
-  "/admin/berita": ["SUPER_ADMIN", "EDITOR", "CONTRIBUTOR"],
   "/admin/halaman": ["SUPER_ADMIN", "EDITOR"],
+  "/admin/pengumuman": ["SUPER_ADMIN", "EDITOR"],
+  "/admin/berita": ["SUPER_ADMIN", "EDITOR", "CONTRIBUTOR"],
 }
 
 export default auth((req) => {

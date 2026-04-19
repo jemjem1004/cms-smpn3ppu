@@ -1,15 +1,19 @@
 import { getMenuItems } from "@/actions/menu"
+import { getPagesForMenu } from "@/actions/page"
 import { MenuBuilder } from "@/components/admin/menu-builder"
 
 export const metadata = {
-  title: "Menu Builder — Admin SMKN 1 Surabaya",
+  title: "Menu Builder — Admin",
   description: "Kelola navigasi website",
 }
 
 export default async function MenuPage() {
-  const result = await getMenuItems()
+  const [menuResult, pages] = await Promise.all([
+    getMenuItems(),
+    getPagesForMenu(),
+  ])
 
-  const items = result.success ? result.data : []
+  const items = menuResult.success ? menuResult.data : []
 
-  return <MenuBuilder items={items} />
+  return <MenuBuilder items={items} pages={pages} />
 }

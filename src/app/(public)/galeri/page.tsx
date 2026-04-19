@@ -3,8 +3,8 @@ import Image from "next/image"
 import { prisma } from "@/lib/prisma"
 
 export const metadata: Metadata = {
-  title: "Galeri — SMKN 1 Surabaya",
-  description: "Galeri foto kegiatan dan fasilitas SMKN 1 Surabaya.",
+  title: "Galeri",
+  description: "Galeri foto kegiatan dan fasilitas sekolah.",
 }
 
 export default async function GaleriPage() {
@@ -17,7 +17,7 @@ export default async function GaleriPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-[#002244]">Galeri Sekolah</h1>
-          <p className="mt-2 text-gray-500">Dokumentasi kegiatan dan fasilitas SMKN 1 Surabaya</p>
+          <p className="mt-2 text-gray-500">Dokumentasi kegiatan dan fasilitas sekolah</p>
         </div>
 
         {images.length > 0 ? (

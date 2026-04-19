@@ -24,6 +24,8 @@ export default async function EditPage({ params }: { params: { id: string } }) {
         slug: page.slug,
         content: page.content,
         isPublished: page.isPublished,
+        metaTitle: page.metaTitle ?? null,
+        metaDesc: page.metaDesc ?? null,
       }}
     />
   )

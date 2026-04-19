@@ -53,6 +53,7 @@ const DEFAULT_IDENTITY: SiteIdentity = {
   tagline: "Surabaya",
   description: "SMK Negeri 1 Surabaya adalah sekolah menengah kejuruan unggulan yang berkomitmen mencetak lulusan berkompeten dan siap kerja.",
   logoUrl: "",
+  faviconUrl: "",
 }
 
 const DEFAULT_CONTACT: SiteContact = {
