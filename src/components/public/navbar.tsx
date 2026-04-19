@@ -1,25 +1,43 @@
 import Link from "next/link"
+import Image from "next/image"
 import { ChevronDown } from "lucide-react"
-import { getPublicMenuItems } from "@/lib/queries"
+import { getPublicMenuItems, getSiteSettings } from "@/lib/queries"
 import { MobileMenuToggle } from "./mobile-menu-toggle"
 
 export async function Navbar() {
-  const items = await getPublicMenuItems()
+  const [items, settings] = await Promise.all([
+    getPublicMenuItems(),
+    getSiteSettings(),
+  ])
+
+  const { identity } = settings
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[72px]">
-          {/* Logo Sesuai Referensi */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
-            <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white shadow-md shrink-0 transform group-hover:scale-105 transition-transform duration-300">
-              <span className="text-[#002244] font-extrabold text-[9px] text-center leading-tight">
-                SMK<br />N1
-              </span>
-            </div>
+            {identity.logoUrl ? (
+              <Image
+                src={identity.logoUrl}
+                alt={identity.name}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md transform group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white shadow-md shrink-0 transform group-hover:scale-105 transition-transform duration-300">
+                <span className="text-[#002244] font-extrabold text-[9px] text-center leading-tight">
+                  {identity.shortName.split(" ").map(w => w[0]).join("").slice(0, 4)}
+                </span>
+              </div>
+            )}
             <div className="leading-none">
-              <h1 className="font-extrabold text-xl text-[#002244] tracking-tight">SMKN 1</h1>
-              <p className="text-[9px] tracking-widest text-red-600 font-bold uppercase mt-1">Surabaya</p>
+              <h1 className="font-extrabold text-xl text-[#002244] tracking-tight">{identity.shortName}</h1>
+              {identity.tagline && (
+                <p className="text-[9px] tracking-widest text-red-600 font-bold uppercase mt-1">{identity.tagline}</p>
+              )}
             </div>
           </Link>
 
@@ -68,7 +86,7 @@ export async function Navbar() {
           </nav>
 
           {/* Mobile menu toggle */}
-          <MobileMenuToggle items={items} />
+          <MobileMenuToggle items={items} identity={identity} />
         </div>
       </div>
     </header>

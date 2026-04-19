@@ -16,6 +16,7 @@ export type Permission =
   | "gallery:manage"
   | "staff:manage"
   | "user:manage"
+  | "page:manage"
 
 // ============================================
 // Permission Matrix
@@ -32,6 +33,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "gallery:manage",
     "staff:manage",
     "user:manage",
+    "page:manage",
   ],
   EDITOR: [
     "content:manage",
@@ -41,6 +43,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "article:delete",
     "gallery:manage",
     "staff:manage",
+    "page:manage",
   ],
   CONTRIBUTOR: ["article:create", "article:edit"],
 }

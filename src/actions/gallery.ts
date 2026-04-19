@@ -140,35 +140,23 @@ export async function reorderGalleryImages(
  * Delete a gallery image. Removes metadata from DB and file from S3.
  * Extracts the S3 key from the imageUrl (everything after the bucket domain).
  */
-export async function deleteGalleryImage(
-  id: string
-): Promise<ActionResult<null>> {
+export async function deleteGalleryImage(id: string): Promise<ActionResult<null>> {
   try {
     await requirePermission("gallery:manage")
 
-    // Fetch the image to get the URL for S3 deletion
     const image = await prisma.galleryImage.findUnique({ where: { id } })
+    if (!image) return { success: false, error: "Gambar tidak ditemukan" }
 
-    if (!image) {
-      return { success: false, error: "Gambar tidak ditemukan" }
-    }
-
-    // Extract S3 key from imageUrl
-    // URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
     try {
       const url = new URL(image.imageUrl)
-      const key = url.pathname.slice(1) // Remove leading "/"
-      await deleteS3Object(key)
+      await deleteS3Object(url.pathname.slice(1))
     } catch {
-      // If URL parsing or S3 deletion fails, still proceed with DB deletion
-      console.error("Gagal menghapus file dari S3, melanjutkan penghapusan dari database")
+      console.error("Gagal menghapus file dari S3")
     }
 
     await prisma.galleryImage.delete({ where: { id } })
-
     revalidatePath("/admin/galeri")
     revalidatePath("/")
-
     return { success: true, data: null }
   } catch (error) {
     if (error instanceof Error) {

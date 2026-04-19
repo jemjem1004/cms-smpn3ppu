@@ -148,13 +148,9 @@ export async function deactivateUser(
       }
     }
 
-    await prisma.user.update({
-      where: { id },
-      data: { isActive: false },
-    })
+    await prisma.user.update({ where: { id }, data: { isActive: false } })
 
     revalidatePath("/admin/pengguna")
-
     return { success: true, data: null }
   } catch (error) {
     if (error instanceof Error) {

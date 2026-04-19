@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { hasPermission, type Role } from "@/lib/rbac"
-import { getCategories } from "@/actions/article"
+import { getCategories } from "@/actions/category"
 import { ArticleForm } from "@/components/admin/article-form"
 import type { SessionWithRole } from "@/types"
 

@@ -2,14 +2,16 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Menu, X, ChevronDown } from "lucide-react"
-import type { MenuItemWithChildren } from "@/types"
+import type { MenuItemWithChildren, SiteIdentity } from "@/types"
 
 interface MobileMenuToggleProps {
   items: MenuItemWithChildren[]
+  identity: SiteIdentity
 }
 
-export function MobileMenuToggle({ items }: MobileMenuToggleProps) {
+export function MobileMenuToggle({ items, identity }: MobileMenuToggleProps) {
   const [open, setOpen] = useState(false)
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
@@ -21,7 +23,7 @@ export function MobileMenuToggle({ items }: MobileMenuToggleProps) {
     <>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="lg:hidden p-2 text-white hover:text-[#FFC107] transition-colors"
+        className="lg:hidden p-2 text-slate-700 hover:text-blue-600 transition-colors"
         aria-label={open ? "Tutup menu" : "Buka menu"}
         aria-expanded={open}
       >
@@ -33,6 +35,26 @@ export function MobileMenuToggle({ items }: MobileMenuToggleProps) {
           className="lg:hidden absolute top-full left-0 w-full bg-[#002244] border-t border-white/10 shadow-lg"
           aria-label="Menu navigasi mobile"
         >
+          {/* Mobile header with logo */}
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-white/10">
+            {identity.logoUrl ? (
+              <Image
+                src={identity.logoUrl}
+                alt={identity.name}
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                <span className="text-[#002244] font-extrabold text-[7px] text-center leading-tight">
+                  {identity.shortName.split(" ").map(w => w[0]).join("").slice(0, 4)}
+                </span>
+              </div>
+            )}
+            <span className="text-white font-bold text-sm">{identity.shortName}</span>
+          </div>
+          
           <ul className="flex flex-col py-2">
             {items.map((item) => (
               <li key={item.id}>

@@ -18,6 +18,7 @@ const ALL_PERMISSIONS: Permission[] = [
   "gallery:manage",
   "staff:manage",
   "user:manage",
+  "page:manage",
 ]
 
 describe("hasPermission", () => {
@@ -46,7 +47,6 @@ describe("hasPermission", () => {
     expect(hasPermission("EDITOR", "menu:manage")).toBe(false)
     expect(hasPermission("EDITOR", "user:manage")).toBe(false)
   })
-
   it("CONTRIBUTOR should only have article:create and article:edit", () => {
     expect(hasPermission("CONTRIBUTOR", "article:create")).toBe(true)
     expect(hasPermission("CONTRIBUTOR", "article:edit")).toBe(true)
@@ -61,6 +61,7 @@ describe("hasPermission", () => {
       "gallery:manage",
       "staff:manage",
       "user:manage",
+      "page:manage",
     ]
     for (const perm of denied) {
       expect(hasPermission("CONTRIBUTOR", perm)).toBe(false)

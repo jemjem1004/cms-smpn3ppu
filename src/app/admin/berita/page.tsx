@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { hasPermission, type Role } from "@/lib/rbac"
-import { getArticles, getCategories } from "@/actions/article"
+import { getArticles } from "@/actions/article"
+import { getCategories } from "@/actions/category"
 import { ArticleList } from "@/components/admin/article-list"
 import type { SessionWithRole } from "@/types"
 
@@ -62,6 +63,7 @@ export default async function BeritaPage({ searchParams }: BeritaPageProps) {
       total={total}
       canPublish={hasPermission(role, "article:publish")}
       canDelete={hasPermission(role, "article:delete")}
+      canManageCategories={hasPermission(role, "article:publish")}
     />
   )
 }

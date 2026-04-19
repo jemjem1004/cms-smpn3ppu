@@ -52,6 +52,7 @@ export function ArticleEditor({ content, onChange }: ArticleEditorProps) {
       }),
     ],
     content,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },

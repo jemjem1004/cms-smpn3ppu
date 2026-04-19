@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { hasPermission, type Role } from "@/lib/rbac"
-import { getArticleById, getCategories } from "@/actions/article"
+import { getArticleById } from "@/actions/article"
+import { getCategories } from "@/actions/category"
 import { ArticleForm } from "@/components/admin/article-form"
 import type { SessionWithRole } from "@/types"
 

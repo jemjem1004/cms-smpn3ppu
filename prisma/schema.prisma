@@ -37,17 +37,8 @@ model User {
   role      Role      @default(CONTRIBUTOR)
   isActive  Boolean   @default(true)
   articles  Article[]
-  sessions  Session[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expires      DateTime
 }
 
 model MenuItem {
@@ -121,4 +112,18 @@ model SiteSettings {
   id    String @id @default(cuid())
   key   String @unique
   value Json
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  isPublished Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
 }

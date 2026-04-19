@@ -19,7 +19,8 @@ export async function generatePresignedUrl(
   const region = process.env.AWS_REGION!
 
   const sanitizedFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "_")
-  const key = `uploads/${Date.now()}-${randomUUID()}-${sanitizedFilename}`
+  // Store files in cms-sekolah folder to keep organized in shared bucket
+  const key = `cms-sekolah/uploads/${Date.now()}-${randomUUID()}-${sanitizedFilename}`
 
   const command = new PutObjectCommand({
     Bucket: bucket,

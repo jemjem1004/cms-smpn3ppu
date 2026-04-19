@@ -14,6 +14,7 @@ const ROUTE_PERMISSIONS: Record<string, string[]> = {
   "/admin/galeri": ["SUPER_ADMIN", "EDITOR"],
   "/admin/guru": ["SUPER_ADMIN", "EDITOR"],
   "/admin/berita": ["SUPER_ADMIN", "EDITOR", "CONTRIBUTOR"],
+  "/admin/halaman": ["SUPER_ADMIN", "EDITOR"],
 }
 
 export default auth((req) => {

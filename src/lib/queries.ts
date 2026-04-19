@@ -38,3 +38,67 @@ export async function getPublicMenuItems(): Promise<MenuItemWithChildren[]> {
     })),
   }))
 }
+
+
+import { unstable_cache } from "next/cache"
+import type { SiteSettings, SiteIdentity, SiteContact, SiteSocial } from "@/types"
+
+// ============================================
+// Default Site Settings
+// ============================================
+
+const DEFAULT_IDENTITY: SiteIdentity = {
+  name: "SMKN 1 Surabaya",
+  shortName: "SMKN 1",
+  tagline: "Surabaya",
+  description: "SMK Negeri 1 Surabaya adalah sekolah menengah kejuruan unggulan yang berkomitmen mencetak lulusan berkompeten dan siap kerja.",
+  logoUrl: "",
+}
+
+const DEFAULT_CONTACT: SiteContact = {
+  address: "Jl. SMKN 1 Surabaya, Kota Surabaya, Jawa Timur",
+  phone: "(031) 1234567",
+  email: "info@smkn1surabaya.sch.id",
+}
+
+const DEFAULT_SOCIAL: SiteSocial = {
+  facebook: "",
+  instagram: "",
+  youtube: "",
+  tiktok: "",
+}
+
+// ============================================
+// Cached Site Settings Query
+// ============================================
+
+async function fetchSiteSettings(): Promise<SiteSettings> {
+  const records = await prisma.siteSettings.findMany({
+    where: {
+      key: {
+        in: ["site.identity", "site.contact", "site.social"]
+      }
+    }
+  })
+
+  const settingsMap = new Map<string, unknown>()
+  for (const record of records) {
+    settingsMap.set(record.key, record.value)
+  }
+
+  return {
+    identity: (settingsMap.get("site.identity") as SiteIdentity) ?? DEFAULT_IDENTITY,
+    contact: (settingsMap.get("site.contact") as SiteContact) ?? DEFAULT_CONTACT,
+    social: (settingsMap.get("site.social") as SiteSocial) ?? DEFAULT_SOCIAL,
+  }
+}
+
+/**
+ * Get site settings with Next.js caching.
+ * Cache is revalidated when settings are updated via admin.
+ */
+export const getSiteSettings = unstable_cache(
+  fetchSiteSettings,
+  ["site-settings"],
+  { tags: ["site-settings"], revalidate: 3600 }
+)

@@ -1,5 +1,7 @@
 import Link from "next/link"
+import Image from "next/image"
 import { MapPin, Phone, Mail } from "lucide-react"
+import { getSiteSettings } from "@/lib/queries"
 
 const quickLinks = [
   { label: "Beranda", href: "/" },
@@ -42,13 +44,26 @@ function YoutubeIcon({ className }: { className?: string }) {
   )
 }
 
-const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com", icon: <FacebookIcon className="h-4 w-4" /> },
-  { label: "Instagram", href: "https://instagram.com", icon: <InstagramIcon className="h-4 w-4" /> },
-  { label: "YouTube", href: "https://youtube.com", icon: <YoutubeIcon className="h-4 w-4" /> },
-]
+function TiktokIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+    </svg>
+  )
+}
 
-export function Footer() {
+export async function Footer() {
+  const settings = await getSiteSettings()
+  const { identity, contact, social } = settings
+
+  // Build social links array from settings
+  const socialLinks = [
+    social.facebook && { label: "Facebook", href: social.facebook, icon: <FacebookIcon className="h-4 w-4" /> },
+    social.instagram && { label: "Instagram", href: social.instagram, icon: <InstagramIcon className="h-4 w-4" /> },
+    social.youtube && { label: "YouTube", href: social.youtube, icon: <YoutubeIcon className="h-4 w-4" /> },
+    social.tiktok && { label: "TikTok", href: social.tiktok, icon: <TiktokIcon className="h-4 w-4" /> },
+  ].filter(Boolean) as { label: string; href: string; icon: React.ReactNode }[]
+
   return (
     <footer className="bg-[#002244] border-t-4 border-[#FFC107]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -56,30 +71,42 @@ export function Footer() {
           {/* Column 1: School Identity + Social Media */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-[#FFC107] text-[#002244] font-bold text-sm">
-                S1
-              </div>
+              {identity.logoUrl ? (
+                <Image
+                  src={identity.logoUrl}
+                  alt={identity.name}
+                  width={36}
+                  height={36}
+                  className="h-9 w-9 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-9 w-9 rounded-full bg-[#FFC107] text-[#002244] font-bold text-sm">
+                  {identity.shortName.split(" ").map(w => w[0]).join("").slice(0, 2)}
+                </div>
+              )}
               <span className="text-white font-bold text-lg tracking-tight">
-                SMKN 1 <span className="text-[#FFC107]">Surabaya</span>
+                {identity.shortName} <span className="text-[#FFC107]">{identity.tagline}</span>
               </span>
             </div>
             <p className="text-white/60 text-sm leading-relaxed mb-4">
-              SMK Negeri 1 Surabaya adalah sekolah menengah kejuruan unggulan yang berkomitmen mencetak lulusan berkompeten dan siap kerja.
+              {identity.description}
             </p>
-            <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className="flex items-center justify-center h-8 w-8 rounded-full bg-white/10 text-white/70 hover:bg-[#FFC107] hover:text-[#002244] transition-colors"
-                >
-                  {social.icon}
-                </a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex items-center gap-3">
+                {socialLinks.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className="flex items-center justify-center h-8 w-8 rounded-full bg-white/10 text-white/70 hover:bg-[#FFC107] hover:text-[#002244] transition-colors"
+                  >
+                    {s.icon}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Column 2: Quick Links */}
@@ -126,20 +153,24 @@ export function Footer() {
               Kontak
             </h3>
             <ul className="space-y-3">
-              <li className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 text-[#FFC107] mt-0.5 shrink-0" />
-                <span className="text-white/60 text-sm">
-                  Jl. SMKN 1 Surabaya, Kota Surabaya, Jawa Timur
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-[#FFC107] shrink-0" />
-                <span className="text-white/60 text-sm">(031) 1234567</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-[#FFC107] shrink-0" />
-                <span className="text-white/60 text-sm">info@smkn1surabaya.sch.id</span>
-              </li>
+              {contact.address && (
+                <li className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 text-[#FFC107] mt-0.5 shrink-0" />
+                  <span className="text-white/60 text-sm">{contact.address}</span>
+                </li>
+              )}
+              {contact.phone && (
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-[#FFC107] shrink-0" />
+                  <span className="text-white/60 text-sm">{contact.phone}</span>
+                </li>
+              )}
+              {contact.email && (
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-[#FFC107] shrink-0" />
+                  <span className="text-white/60 text-sm">{contact.email}</span>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -149,7 +180,7 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <p className="text-center text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} SMKN 1 Surabaya. All rights reserved.
+            &copy; {new Date().getFullYear()} {identity.name}. All rights reserved.
           </p>
         </div>
       </div>

@@ -112,3 +112,35 @@ export interface PresignResult {
   fileUrl: string
   key: string
 }
+
+
+// ============================================
+// Site Settings Types
+// ============================================
+
+export interface SiteIdentity {
+  name: string
+  shortName: string
+  tagline: string
+  description: string
+  logoUrl: string
+}
+
+export interface SiteContact {
+  address: string
+  phone: string
+  email: string
+}
+
+export interface SiteSocial {
+  facebook: string
+  instagram: string
+  youtube: string
+  tiktok: string
+}
+
+export interface SiteSettings {
+  identity: SiteIdentity
+  contact: SiteContact
+  social: SiteSocial
+}

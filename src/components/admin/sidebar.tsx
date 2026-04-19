@@ -13,6 +13,8 @@ import {
   Users,
   LogOut,
   PanelLeft,
+  BookOpen,
+  Settings,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -45,21 +47,23 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Menu", href: "/admin/menu", icon: Menu, permission: "menu:manage" },
+  { label: "Halaman", href: "/admin/halaman", icon: BookOpen, permission: "page:manage" },
   { label: "Konten", href: "/admin/konten", icon: FileText, permission: "content:manage" },
   { label: "Berita", href: "/admin/berita", icon: Newspaper, permission: "article:create" },
   { label: "Galeri", href: "/admin/galeri", icon: Image, permission: "gallery:manage" },
-  { label: "Guru", href: "/admin/guru", icon: GraduationCap, permission: "staff:manage" },
+  { label: "Guru & Tendik", href: "/admin/guru", icon: GraduationCap, permission: "staff:manage" },
   { label: "Pengguna", href: "/admin/pengguna", icon: Users, permission: "user:manage" },
+  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, permission: "menu:manage" },
 ]
 
 const ROLE_PERMISSIONS: Record<string, string[]> = {
   SUPER_ADMIN: [
     "menu:manage", "content:manage", "article:create", "article:edit",
-    "article:publish", "article:delete", "gallery:manage", "staff:manage", "user:manage",
+    "article:publish", "article:delete", "gallery:manage", "staff:manage", "user:manage", "page:manage",
   ],
   EDITOR: [
     "content:manage", "article:create", "article:edit",
-    "article:publish", "article:delete", "gallery:manage", "staff:manage",
+    "article:publish", "article:delete", "gallery:manage", "staff:manage", "page:manage",
   ],
   CONTRIBUTOR: ["article:create", "article:edit"],
 }
@@ -135,7 +139,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
   return (
     <>
       {/* Desktop sidebar - Deep Navy Institutional Branding */}
-      <aside 
+      <aside
         className={cn(
           "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-[#001b36] border-r border-[#001122] z-50 shadow-[4px_0_24px_rgba(0,0,0,0.2)] transition-all duration-300 ease-in-out relative group/sidebar before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/5 before:to-transparent before:pointer-events-none",
           isMinimized ? "w-[80px]" : "w-[260px]"
@@ -143,23 +147,23 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
       >
         {/* Toggle Collapse Button */}
         <button
-           onClick={() => setIsMinimized(!isMinimized)}
-           className="absolute -right-3.5 top-20 bg-[#002244] border border-blue-800/40 text-blue-300 hover:bg-blue-600 hover:text-white hover:border-transparent hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] flex items-center justify-center rounded-full w-7 h-7 z-50 opacity-0 group-hover/sidebar:opacity-100 transition-all hover:scale-110"
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="absolute -right-3.5 top-20 bg-[#002244] border border-blue-800/40 text-blue-300 hover:bg-blue-600 hover:text-white hover:border-transparent hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] flex items-center justify-center rounded-full w-7 h-7 z-50 opacity-0 group-hover/sidebar:opacity-100 transition-all hover:scale-110"
         >
           {isMinimized ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m13 17 5-5-5-5"/><path d="m6 17 5-5-5-5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m13 17 5-5-5-5" /><path d="m6 17 5-5-5-5" /></svg>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m11 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg>
           )}
         </button>
 
         <div className={cn("flex h-16 items-center border-b border-white/5 transition-all relative z-10", isMinimized ? "justify-center px-4" : "gap-3 px-6")}>
-          <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white/20 shrink-0 shadow-lg">
-            <span className="text-[#002244] font-extrabold text-[7px] text-center leading-tight">SMK<br/>N1</span>
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center border-2 border-white/20 shrink-0 shadow-lg">
+            <LayoutDashboard className="h-4 w-4 text-white" />
           </div>
           {!isMinimized && (
             <div className="leading-none mt-0.5 overflow-hidden">
-              <span className="font-extrabold text-sm text-white block tracking-tight whitespace-nowrap drop-shadow-sm">SMKN 1 <span className="text-red-500">SBY</span></span>
+              <span className="font-extrabold text-sm text-white block tracking-tight whitespace-nowrap drop-shadow-sm">ASTRO SCHOOL</span>
               <span className="text-[9px] text-blue-300/80 uppercase tracking-[0.2em] font-bold mt-1 block">Portal Admin</span>
             </div>
           )}
@@ -187,7 +191,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
       </aside>
 
       {/* Header (mobile + desktop) */}
-      <header 
+      <header
         className={cn(
           "sticky top-0 z-40 flex h-14 items-center gap-4 border-b border-slate-200/40 bg-white/60 backdrop-blur-2xl px-4 transition-all duration-300 ease-in-out shadow-[0_1px_2px_rgba(0,0,0,0.01)]",
           isMinimized ? "lg:pl-[96px]" : "lg:pl-[276px]"
@@ -204,11 +208,11 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
           {/* Mobile Sheet Panel with Navy Theme */}
           <SheetContent side="left" className="w-[260px] p-0 bg-[#001b36] text-white border-r-[#001122]">
             <SheetHeader className="h-14 flex-row items-center gap-3 px-6 border-b border-white/5 space-y-0">
-              <div className="w-7 h-7 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white/20 shrink-0">
-                <span className="text-[#002244] font-extrabold text-[6px] text-center leading-tight">SMK<br/>N1</span>
+              <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center border-2 border-white/20 shrink-0">
+                <LayoutDashboard className="h-3.5 w-3.5 text-white" />
               </div>
               <div className="leading-none mt-0.5 text-left">
-                <SheetTitle className="font-extrabold text-xs text-white tracking-tight m-0">SMKN 1 <span className="text-red-500">SBY</span></SheetTitle>
+                <SheetTitle className="font-extrabold text-xs text-white tracking-tight m-0">ASTRO SCHOOL</SheetTitle>
               </div>
             </SheetHeader>
             <div className="px-3.5 py-6">
@@ -220,7 +224,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
         {/* Header Left Area: Clean Date Pill */}
         <div className="flex-1 flex items-center lg:px-2">
           <div className="hidden md:flex items-center gap-2 text-[11px] font-bold tracking-wide text-slate-400 bg-slate-100/50 px-3.5 py-1.5 rounded-full border border-slate-200/50 cursor-pointer hover:bg-slate-100 hover:text-slate-600 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
             {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
@@ -260,7 +264,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
       </header>
 
       {/* Main Content Wrapper */}
-      <main 
+      <main
         className={cn(
           "transition-all duration-300 ease-in-out min-h-[calc(100vh-64px)] relative",
           isMinimized ? "lg:pl-[80px]" : "lg:pl-[260px]"
