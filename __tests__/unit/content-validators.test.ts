@@ -8,7 +8,8 @@ import {
 } from "@/lib/validators"
 
 describe("heroContentSchema", () => {
-  const validHero = {
+  const validSlide = {
+    id: "slide-1",
     title: "Selamat Datang",
     description: "Deskripsi hero",
     imageUrl: "https://example.com/hero.jpg",
@@ -17,21 +18,32 @@ describe("heroContentSchema", () => {
     ctaUrl: "/berita/terbaru",
   }
 
-  it("should accept valid hero content", () => {
+  const validHero = { slides: [validSlide] }
+
+  it("should accept valid hero content with slides", () => {
     expect(heroContentSchema.safeParse(validHero).success).toBe(true)
   })
 
-  it("should reject empty title", () => {
-    expect(heroContentSchema.safeParse({ ...validHero, title: "" }).success).toBe(false)
+  it("should accept multiple slides (up to 5)", () => {
+    const multi = { slides: [validSlide, { ...validSlide, id: "slide-2" }, { ...validSlide, id: "slide-3" }] }
+    expect(heroContentSchema.safeParse(multi).success).toBe(true)
   })
 
-  it("should reject missing description", () => {
-    const { description, ...rest } = validHero
-    expect(heroContentSchema.safeParse(rest).success).toBe(false)
+  it("should reject empty slides array", () => {
+    expect(heroContentSchema.safeParse({ slides: [] }).success).toBe(false)
   })
 
-  it("should reject empty imageUrl", () => {
-    expect(heroContentSchema.safeParse({ ...validHero, imageUrl: "" }).success).toBe(false)
+  it("should reject slide with empty title", () => {
+    expect(heroContentSchema.safeParse({ slides: [{ ...validSlide, title: "" }] }).success).toBe(false)
+  })
+
+  it("should reject missing slides field", () => {
+    expect(heroContentSchema.safeParse({}).success).toBe(false)
+  })
+
+  it("should reject more than 5 slides", () => {
+    const tooMany = { slides: Array.from({ length: 6 }, (_, i) => ({ ...validSlide, id: `s-${i}` })) }
+    expect(heroContentSchema.safeParse(tooMany).success).toBe(false)
   })
 })
 

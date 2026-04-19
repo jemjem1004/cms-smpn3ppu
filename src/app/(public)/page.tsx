@@ -25,8 +25,8 @@ export default function HomePage() {
       <HeroSection />
       <ProfileNewsSection />
       <PrincipalSection />
-      <GallerySection />
       <StaffSlider />
+      <GallerySection />
     </>
   )
 }

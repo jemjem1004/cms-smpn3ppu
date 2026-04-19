@@ -65,13 +65,18 @@ export interface PaginatedResult<T> {
 // Institutional Content Types
 // ============================================
 
-export interface HeroContent {
+export interface HeroSlide {
+  id: string
   title: string
   description: string
   imageUrl: string
   badgeLabel: string
   ctaText: string
   ctaUrl: string
+}
+
+export interface HeroContent {
+  slides: HeroSlide[]
 }
 
 export interface ProfileContent {

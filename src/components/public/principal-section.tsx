@@ -25,68 +25,66 @@ export async function PrincipalSection() {
 
   return (
     <section
-      className="relative py-16 md:py-24 overflow-hidden"
+      className="text-white py-16"
       style={{
-        backgroundColor: "#0f172a",
-        backgroundImage:
-          "radial-gradient(circle, rgba(255,255,255,0.05) 1.5px, transparent 1.5px)",
-        backgroundSize: "24px 24px",
+        backgroundColor: '#004d80',
+        backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)',
+        backgroundSize: '20px 20px'
       }}
     >
-      {/* Soft gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/80 via-transparent to-[#0f172a]/90 pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* Left — Prakata text (8/12) */}
-          <div className="w-full lg:w-8/12 relative">
-            <div className="absolute -left-6 -top-6 text-8xl text-white/5 font-serif select-none pointer-events-none">"</div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-8 tracking-tight">
-              Prakata Kepala Sekolah
-            </h2>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row items-center gap-10">
+          
+          {/* Teks Prakata */}
+          <div className="lg:w-8/12 space-y-4">
+            <h3 className="text-2xl lg:text-3xl font-bold mb-6">Prakata Kepala Sekolah</h3>
+            
             <div
-              className="text-slate-300 italic leading-loose text-base md:text-lg mb-8"
+              className="text-sm lg:text-base leading-relaxed text-blue-100 italic"
               dangerouslySetInnerHTML={{ __html: principal.message }}
             />
-
-            <div className="mt-8 border-t border-white/10 pt-6">
-              <p className="text-white font-extrabold text-xl tracking-wide uppercase">{principal.name}</p>
-              <p className="text-[#FFC107] text-sm font-semibold mt-1 tracking-wider">{principal.title}</p>
+            
+            <div className="pt-4">
+              <p className="font-bold text-lg uppercase">{principal.name}</p>
+              <p className="text-sm text-yellow-300">{principal.title}</p>
             </div>
           </div>
 
-          {/* Right — Photo (4/12) */}
-          <div className="w-full lg:w-4/12 flex justify-center lg:justify-end relative">
-            <div className="absolute inset-0 bg-[#FFC107] rounded-full blur-[60px] opacity-20 mix-blend-screen" />
-            {principal.photoUrl ? (
-              <div className="relative h-64 w-64 md:h-[320px] md:w-[250px] md:rounded-2xl rounded-full overflow-hidden shadow-2xl border border-white/10 ring-4 ring-[#FFC107]/20 group">
-                <Image
-                  src={principal.photoUrl}
-                  alt={principal.name}
-                  fill
-                  sizes="(max-width: 768px) 256px, 288px"
-                  className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                />
-              </div>
-            ) : (
-              <div className="h-64 w-64 md:h-[320px] md:w-[250px] md:rounded-2xl rounded-full border border-white/10 ring-4 ring-[#FFC107]/20 bg-white/5 backdrop-blur-md flex items-center justify-center shadow-2xl">
-                <svg
-                  className="h-20 w-20 text-white/30"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          {/* Foto Kepala Sekolah */}
+          <div className="lg:w-4/12 flex justify-center lg:justify-end">
+            <div className="relative">
+              {/* Bingkai kuning tipis ala referensi */}
+              <div className="absolute -inset-2 border border-yellow-400 rounded"></div>
+              {principal.photoUrl ? (
+                <div className="relative z-10 w-64 h-80 rounded overflow-hidden shadow-lg grayscale">
+                  <Image
+                    src={principal.photoUrl}
+                    alt={principal.name}
+                    fill
+                    sizes="(max-width: 768px) 256px, 256px"
+                    className="object-cover"
                   />
-                </svg>
-              </div>
-            )}
+                </div>
+              ) : (
+                <div className="relative z-10 w-64 h-80 rounded overflow-hidden shadow-lg grayscale bg-white/10 flex items-center justify-center">
+                  <svg
+                    className="h-16 w-16 text-white/30"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+              )}
+            </div>
           </div>
+
         </div>
       </div>
     </section>

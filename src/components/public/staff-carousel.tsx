@@ -38,7 +38,7 @@ export function StaffCarousel({ staff }: StaffCarouselProps) {
   }, [api])
 
   return (
-    <div>
+    <div className="pb-8">
       <Carousel
         setApi={setApi}
         opts={{
@@ -46,25 +46,26 @@ export function StaffCarousel({ staff }: StaffCarouselProps) {
           loop: true,
         }}
         plugins={[
-          Autoplay({ delay: 4000, stopOnInteraction: false }),
+          Autoplay({ delay: 3000, stopOnInteraction: false }),
         ]}
         className="w-full"
       >
-        <CarouselContent className="-ml-4 md:-ml-6 py-4">
+        <CarouselContent className="-ml-3 py-4">
           {staff.map((member) => (
             <CarouselItem
               key={member.id}
-              className="pl-4 md:pl-6 basis-[85%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+              // basis changes: Slightly larger. 4 items on desktop, 3 on tablet.
+              className="pl-3 md:pl-4 basis-[60%] sm:basis-[40%] md:basis-[33.333%] lg:basis-[25%]"
             >
-              <div className="flex flex-col p-3 rounded-3xl hover:bg-slate-50 transition-colors duration-300 group h-full cursor-grab active:cursor-grabbing">
-                {/* Photo Container - Clean Portrait / Rectangle */}
-                <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 mb-5">
+              <div className="flex flex-col p-3 rounded-2xl hover:bg-slate-50 transition-colors duration-300 group h-full cursor-grab active:cursor-grabbing border border-transparent hover:border-slate-100">
+                {/* Photo Container - Clean Portrait / Rectangle (Medium-Small) */}
+                <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-slate-100 mb-4 shadow-sm">
                   {member.photoUrl ? (
                     <Image
                       src={member.photoUrl}
                       alt={member.name}
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="(max-width: 768px) 60vw, 25vw"
                       className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                     />
                   ) : (
@@ -87,12 +88,12 @@ export function StaffCarousel({ staff }: StaffCarouselProps) {
                   )}
                 </div>
 
-                {/* Minimalist Info Container */}
-                <div className="flex flex-col px-1">
-                  <h3 className="font-semibold text-slate-900 text-lg tracking-tight mb-1">
+                {/* Info Container (Slightly larger typography) */}
+                <div className="flex flex-col px-1.5">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-[15px] leading-tight mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">
                     {member.name}
                   </h3>
-                  <p className="text-slate-500 text-sm font-medium">
+                  <p className="text-slate-500 text-xs font-semibold line-clamp-1">
                     {member.position}
                   </p>
                 </div>

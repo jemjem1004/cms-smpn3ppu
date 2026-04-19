@@ -46,13 +46,18 @@ export const galleryImageSchema = z.object({
 // Institutional Content Schemas
 // ============================================
 
-export const heroContentSchema = z.object({
+const heroSlideSchema = z.object({
+  id: z.string().min(1, "ID slide wajib diisi"),
   title: z.string().min(1, "Judul wajib diisi"),
   description: z.string().min(1, "Deskripsi wajib diisi"),
   imageUrl: z.string().min(1, "URL gambar wajib diisi"),
   badgeLabel: z.string().min(1, "Label badge wajib diisi"),
   ctaText: z.string().min(1, "Teks CTA wajib diisi"),
   ctaUrl: z.string().min(1, "URL CTA wajib diisi"),
+})
+
+export const heroContentSchema = z.object({
+  slides: z.array(heroSlideSchema).min(1, "Minimal satu slide harus diisi").max(5, "Maksimal 5 slide"),
 })
 
 export const profileContentSchema = z.object({

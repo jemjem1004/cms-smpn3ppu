@@ -328,22 +328,26 @@ export function StaffManager({ staff: initialStaff }: StaffManagerProps) {
   // ─── Render ─────────────────────────────────────────────────
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Data Guru</h1>
-          <p className="text-sm text-muted-foreground">
-            Kelola data guru dan tenaga kependidikan. Seret untuk mengatur urutan tampil.
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Header Container Modernized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+        {/* Subtle decorative gradient */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Data Guru</h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Kelola data dewan guru dan tenaga kependidikan sekolah. Seret untuk mengatur urutan susunan.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3 relative z-10 w-full sm:w-auto">
           {orderChanged && (
-            <Button onClick={handleSaveOrder} disabled={savingOrder}>
+            <Button onClick={handleSaveOrder} disabled={savingOrder} variant="outline" className="rounded-xl border-blue-200 bg-blue-50/50 text-blue-700 hover:bg-blue-100 font-medium w-full sm:w-auto">
               <Save className="mr-2 h-4 w-4" />
               {savingOrder ? "Menyimpan..." : "Simpan Urutan"}
             </Button>
           )}
-          <Button variant="outline" onClick={openAddForm}>
+          <Button onClick={openAddForm} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all hover:-translate-y-0.5 w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Tambah Guru
           </Button>
@@ -351,13 +355,13 @@ export function StaffManager({ staff: initialStaff }: StaffManagerProps) {
       </div>
 
       {staff.length === 0 ? (
-        <div className="rounded-md border border-dashed p-12 text-center text-muted-foreground">
-          <Users className="mx-auto mb-3 h-12 w-12" />
-          <p>Belum ada data guru.</p>
-          <p className="text-sm">Klik &quot;Tambah Guru&quot; untuk memulai.</p>
+        <div className="rounded-2xl border border-dashed border-slate-300 p-12 text-center text-slate-500 bg-slate-50/50">
+          <Users className="mx-auto mb-3 h-12 w-12 text-slate-400" />
+          <p className="font-medium">Belum ada data guru.</p>
+          <p className="text-sm text-slate-400 mt-1">Klik &quot;Tambah Guru&quot; di atas untuk memulai mengisi data kepengurusan.</p>
         </div>
       ) : (
-        <div className="rounded-md border">
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -368,13 +372,13 @@ export function StaffManager({ staff: initialStaff }: StaffManagerProps) {
               strategy={verticalListSortingStrategy}
             >
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-slate-50/50">
                   <TableRow>
                     <TableHead className="w-10" />
-                    <TableHead className="w-12">Foto</TableHead>
-                    <TableHead>Nama</TableHead>
-                    <TableHead>Jabatan</TableHead>
-                    <TableHead className="text-right">Aksi</TableHead>
+                    <TableHead className="w-12 font-bold text-slate-700">Foto</TableHead>
+                    <TableHead className="font-bold text-slate-700">Nama</TableHead>
+                    <TableHead className="font-bold text-slate-700">Jabatan</TableHead>
+                    <TableHead className="text-right font-bold text-slate-700">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

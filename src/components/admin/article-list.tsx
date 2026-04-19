@@ -191,46 +191,54 @@ export function ArticleList({
   ]
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Berita</h1>
-          <p className="text-sm text-muted-foreground">{total} artikel</p>
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Header Container Modernized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+        {/* Subtle decorative gradient */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Manajemen Berita</h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Kelola total {total} artikel publikasi portal sekolah.
+          </p>
         </div>
-        <Button asChild>
+        <Button asChild className="relative z-10 bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all hover:-translate-y-0.5">
           <Link href="/admin/berita/baru">
             <Plus className="mr-2 h-4 w-4" />
-            Tambah Artikel
+            Tulis Artikel Baru
           </Link>
         </Button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row">
+      {/* Filters Area wrapped in premium card */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex flex-1 gap-2">
-          <Input
-            placeholder="Cari judul artikel..."
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch()
-            }}
-            className="max-w-sm"
-          />
-          <Button variant="outline" size="icon" onClick={handleSearch}>
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Cari judul artikel..."
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch()
+              }}
+              className="pl-9 h-11 bg-slate-50 border-slate-200 focus-visible:ring-[#002244] rounded-xl"
+            />
+          </div>
+          <Button variant="outline" size="icon" onClick={handleSearch} className="h-11 w-11 rounded-xl border-slate-200 bg-slate-50 hover:bg-slate-100 hidden sm:flex">
             <Search className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Select
             value={searchParams.get("categoryId") ?? ""}
             onValueChange={(v) => updateParams("categoryId", v === "all" ? "" : v)}
           >
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[160px] h-11 rounded-xl bg-slate-50 border-slate-200">
               <SelectValue placeholder="Kategori" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-slate-200 shadow-xl">
               <SelectItem value="all">Semua Kategori</SelectItem>
               {categories.map((cat) => (
                 <SelectItem key={cat.id} value={cat.id}>
@@ -243,10 +251,10 @@ export function ArticleList({
             value={searchParams.get("status") ?? ""}
             onValueChange={(v) => updateParams("status", v === "all" ? "" : v)}
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] h-11 rounded-xl bg-slate-50 border-slate-200">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-slate-200 shadow-xl">
               <SelectItem value="all">Semua Status</SelectItem>
               <SelectItem value="DRAFT">Draft</SelectItem>
               <SelectItem value="PUBLISHED">Published</SelectItem>
@@ -255,9 +263,9 @@ export function ArticleList({
         </div>
       </div>
 
-      {/* Table */}
-      <div className="rounded-md border">
-        <DataTable columns={columns} data={articles} emptyMessage="Belum ada artikel" />
+      {/* Table Area */}
+      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+        <DataTable columns={columns} data={articles} emptyMessage="Belum ada artikel publikasi" />
       </div>
 
       {/* Pagination */}

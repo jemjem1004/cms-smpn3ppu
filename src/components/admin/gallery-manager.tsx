@@ -348,22 +348,26 @@ export function GalleryManager({ images: initialImages }: GalleryManagerProps) {
   // ─── Render ─────────────────────────────────────────────────
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Galeri Foto</h1>
-          <p className="text-sm text-muted-foreground">
-            Kelola foto galeri sekolah. Seret untuk mengatur urutan.
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Header Container Modernized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+        {/* Subtle decorative gradient */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Galeri Foto</h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Kelola foto galeri sekolah. Tahan dan seret foto untuk mengatur urutannya.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3 relative z-10 w-full sm:w-auto">
           {orderChanged && (
-            <Button onClick={handleSaveOrder} disabled={savingOrder}>
+            <Button onClick={handleSaveOrder} disabled={savingOrder} variant="outline" className="rounded-xl border-blue-200 bg-blue-50/50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-colors w-full sm:w-auto">
               <Save className="mr-2 h-4 w-4" />
               {savingOrder ? "Menyimpan..." : "Simpan Urutan"}
             </Button>
           )}
-          <Button variant="outline" onClick={handleOpenUpload}>
+          <Button onClick={handleOpenUpload} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all hover:-translate-y-0.5 w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Tambah Foto
           </Button>

@@ -67,20 +67,20 @@ export async function ProfileNewsSection() {
   const embedUrl = getYouTubeEmbedUrl(profile.videoUrl)
 
   return (
-    <section className="bg-slate-50 py-16 md:py-24">
+    <section className="bg-white py-16 md:py-24 border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
-          {/* Left column — Profile + Video (7/12) */}
+          {/* Left column — Profile + Video */}
           <div className="w-full lg:w-7/12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-8 tracking-tight relative pb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-6 tracking-tight flex items-center gap-3">
+              <span className="w-2 h-8 bg-[#005b9f] block rounded-sm"></span>
               Profil SMK Negeri 1 Surabaya
-              <span className="absolute bottom-0 left-0 w-16 h-1.5 bg-blue-600 rounded-full" />
             </h2>
 
             {/* Video */}
             {profile.videoUrl ? (
               embedUrl ? (
-                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl mb-8 group ring-1 ring-black/5 bg-slate-900 border border-slate-200">
+                <div className="relative aspect-video rounded-md overflow-hidden shadow-md mb-6 bg-slate-900 border border-slate-200">
                   <iframe
                     src={embedUrl}
                     title="Profil SMK Negeri 1 Surabaya"
@@ -90,17 +90,17 @@ export async function ProfileNewsSection() {
                   />
                 </div>
               ) : (
-                /* Non-YouTube video link with play button overlay */
+                /* Non-YouTube video link */
                 <a
                   href={profile.videoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative block aspect-video rounded-2xl overflow-hidden shadow-xl mb-8 bg-slate-900 group ring-1 ring-black/5"
+                  className="relative block aspect-video rounded-md overflow-hidden shadow-md mb-6 bg-slate-100 border border-slate-200 group"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
-                    <div className="h-20 w-20 rounded-full bg-red-600 flex items-center justify-center shadow-2xl shadow-red-500/50 group-hover:scale-110 transition-transform duration-300">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors z-10">
+                    <div className="h-16 w-16 rounded-full bg-[#ff0000] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                       <svg
-                        className="h-10 w-10 text-white ml-2"
+                        className="h-8 w-8 text-white ml-1"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -108,64 +108,58 @@ export async function ProfileNewsSection() {
                       </svg>
                     </div>
                   </div>
-                  <div className="absolute top-4 left-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#002244] border-2 border-white flex items-center justify-center p-1">
-                      <span className="text-[#FFC107] font-bold text-[10px]">S1</span>
-                    </div>
-                    <span className="font-bold text-white drop-shadow-md text-sm">PROFIL TERBARU SMKN 1</span>
-                  </div>
                 </a>
               )
             ) : (
-              <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-200 mb-8 flex items-center justify-center border border-slate-300 shadow-sm">
-                <span className="text-slate-500 font-medium">
+              <div className="relative aspect-video rounded-md overflow-hidden bg-slate-100 mb-6 border border-slate-200 flex items-center justify-center">
+                <span className="text-slate-400 font-medium text-sm">
                   Video belum tersedia
                 </span>
               </div>
             )}
 
             {/* Description */}
-            <p className="text-slate-600 leading-relaxed text-lg font-light">
+            <p className="text-slate-600 leading-relaxed text-base font-medium">
               {profile.description}
             </p>
           </div>
 
-          {/* Right column — Latest News (5/12) */}
-          <div className="w-full lg:w-5/12 pt-2 lg:pt-0">
+          {/* Right column — Latest News */}
+          <div className="w-full lg:w-5/12">
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                 Berita Terbaru
               </h2>
               <Link
                 href="/berita"
-                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors px-3 py-1.5 rounded-full hover:bg-blue-50"
+                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors"
               >
-                Lebih Banyak &rarr;
+                Selengkapnya &rarr;
               </Link>
             </div>
 
             {latestArticles.length > 0 ? (
-              <div className="space-y-5">
+              <div className="space-y-6">
                 {latestArticles.map((article) => (
                   <Link
                     key={article.id}
                     href={`/berita/${article.slug}`}
-                    className="flex gap-5 group rounded-xl p-3 -mx-3 hover:bg-white border border-transparent hover:border-slate-100 hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300"
+                    className="flex gap-5 group items-center"
                   >
                     {/* Thumbnail */}
-                    <div className="relative h-24 w-32 flex-shrink-0 rounded-lg overflow-hidden bg-slate-200 shadow-sm">
+                    <div className="relative h-20 w-28 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100 shadow-sm border border-slate-200/60">
                       {article.thumbnailUrl ? (
                         <Image
                           src={article.thumbnailUrl}
                           alt={article.title}
                           fill
-                          sizes="128px"
+                          sizes="112px"
                           className="object-cover transform group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
                           <svg
-                            className="h-8 w-8 text-slate-400"
+                            className="h-6 w-6 text-slate-300"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -183,11 +177,10 @@ export async function ProfileNewsSection() {
 
                     {/* Title + Date */}
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-700 line-clamp-2 transition-colors mb-1">
+                      <h3 className="text-sm font-bold text-slate-800 group-hover:text-blue-600 line-clamp-2 transition-colors mb-2 leading-snug">
                         {article.title}
                       </h3>
-                      <p className="text-xs font-medium text-slate-500 flex items-center gap-1.5 mt-auto">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      <p className="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
                         {formatDate(article.publishedAt)}
                       </p>
                     </div>
@@ -195,7 +188,7 @@ export async function ProfileNewsSection() {
                 ))}
               </div>
             ) : (
-              <div className="flex items-center justify-center h-48 rounded-2xl border-2 border-dashed border-slate-200 bg-white">
+              <div className="flex items-center justify-center h-48 rounded-2xl border border-slate-200 bg-slate-50">
                 <p className="text-slate-400 text-sm font-medium">
                   Belum ada berita terbaru
                 </p>

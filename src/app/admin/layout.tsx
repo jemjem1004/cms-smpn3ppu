@@ -27,11 +27,10 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <AdminSidebar user={user} />
-      <main className="lg:pl-64">
-        <div className="p-4 sm:p-6 lg:p-8">{children}</div>
-      </main>
+    <div className="min-h-screen bg-slate-50/40 selection:bg-blue-100">
+      <AdminSidebar user={user}>
+        <div className="p-4 sm:p-6 lg:p-10">{children}</div>
+      </AdminSidebar>
       <Toaster />
     </div>
   )

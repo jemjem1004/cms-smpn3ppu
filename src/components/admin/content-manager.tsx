@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { updateInstitutionalContent } from "@/actions/content"
-import type { HeroContent, ProfileContent, PrincipalContent, DepartmentContent } from "@/types"
+import type { HeroContent, HeroSlide, ProfileContent, PrincipalContent, DepartmentContent } from "@/types"
 
 interface ContentManagerProps {
   heroContent: HeroContent | null
@@ -20,12 +20,7 @@ interface ContentManagerProps {
 }
 
 const defaultHero: HeroContent = {
-  title: "",
-  description: "",
-  imageUrl: "",
-  badgeLabel: "",
-  ctaText: "",
-  ctaUrl: "",
+  slides: [],
 }
 
 const defaultProfile: ProfileContent = {
@@ -54,12 +49,16 @@ export function ContentManager({
   departmentContent,
 }: ContentManagerProps) {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Manajemen Konten</h1>
-        <p className="text-muted-foreground">
-          Kelola konten institusional website sekolah
-        </p>
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Header Container Modernized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Manajemen Konten</h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Kelola konten institusional website sekolah (Hero, Profil, Prakata, dsb).
+          </p>
+        </div>
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
@@ -95,17 +94,47 @@ export function ContentManager({
 // ============================================
 
 function HeroTab({ initialData }: { initialData: HeroContent }) {
-  const [data, setData] = useState<HeroContent>(initialData)
+  // Support old format migration
+  const initialSlides: HeroSlide[] = Array.isArray(initialData.slides)
+    ? initialData.slides
+    : []
+
+  const [slides, setSlides] = useState<HeroSlide[]>(initialSlides)
   const [saving, setSaving] = useState(false)
 
-  function update(field: keyof HeroContent, value: string) {
-    setData((prev) => ({ ...prev, [field]: value }))
+  function addSlide() {
+    if (slides.length >= 5) {
+      toast.error("Maksimal 5 slide")
+      return
+    }
+    setSlides((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        title: "",
+        description: "",
+        imageUrl: "",
+        badgeLabel: "",
+        ctaText: "Baca Lebih Lanjut",
+        ctaUrl: "/berita",
+      },
+    ])
+  }
+
+  function removeSlide(id: string) {
+    setSlides((prev) => prev.filter((s) => s.id !== id))
+  }
+
+  function updateSlide(id: string, field: keyof HeroSlide, value: string) {
+    setSlides((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, [field]: value } : s))
+    )
   }
 
   async function handleSave() {
     setSaving(true)
     try {
-      const result = await updateInstitutionalContent("HERO", data)
+      const result = await updateInstitutionalContent("HERO", { slides })
       if (result.success) {
         toast.success("Hero section berhasil disimpan")
       } else {
@@ -120,79 +149,105 @@ function HeroTab({ initialData }: { initialData: HeroContent }) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Hero Section</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Hero Section Slider</CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Kelola slide hero (maks. 5 slide). Setiap slide tampil bergantian di landing page.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={addSlide} disabled={slides.length >= 5}>
+          + Tambah Slide
+        </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="hero-title">Judul</Label>
-          <Input
-            id="hero-title"
-            placeholder="Judul hero section"
-            value={data.title}
-            onChange={(e) => update("title", e.target.value)}
-          />
-        </div>
+        {slides.length === 0 && (
+          <p className="text-center text-sm text-muted-foreground py-8">
+            Belum ada slide. Klik &quot;Tambah Slide&quot; untuk menambahkan.
+          </p>
+        )}
 
-        <div className="space-y-2">
-          <Label htmlFor="hero-description">Deskripsi</Label>
-          <Textarea
-            id="hero-description"
-            placeholder="Deskripsi hero section"
-            rows={3}
-            value={data.description}
-            onChange={(e) => update("description", e.target.value)}
-          />
-        </div>
+        {slides.map((slide, index) => (
+          <div key={slide.id} className="rounded-lg border p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold">Slide #{index + 1}</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+                onClick={() => removeSlide(slide.id)}
+              >
+                Hapus
+              </Button>
+            </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="hero-imageUrl">URL Gambar Utama</Label>
-          <Input
-            id="hero-imageUrl"
-            placeholder="https://example.com/image.jpg"
-            value={data.imageUrl}
-            onChange={(e) => update("imageUrl", e.target.value)}
-          />
-        </div>
+            <div className="space-y-2">
+              <Label>Judul</Label>
+              <Input
+                placeholder="Judul slide"
+                value={slide.title}
+                onChange={(e) => updateSlide(slide.id, "title", e.target.value)}
+              />
+            </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="hero-badgeLabel">Label Badge</Label>
-          <Input
-            id="hero-badgeLabel"
-            placeholder="Contoh: Prestasi Siswa"
-            value={data.badgeLabel}
-            onChange={(e) => update("badgeLabel", e.target.value)}
-          />
-        </div>
+            <div className="space-y-2">
+              <Label>Deskripsi</Label>
+              <Textarea
+                placeholder="Deskripsi slide"
+                rows={2}
+                value={slide.description}
+                onChange={(e) => updateSlide(slide.id, "description", e.target.value)}
+              />
+            </div>
 
-        <Separator />
+            <div className="space-y-2">
+              <Label>URL Gambar</Label>
+              <Input
+                placeholder="https://example.com/image.jpg"
+                value={slide.imageUrl}
+                onChange={(e) => updateSlide(slide.id, "imageUrl", e.target.value)}
+              />
+            </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="hero-ctaText">Teks CTA</Label>
-            <Input
-              id="hero-ctaText"
-              placeholder="Baca Lebih Lanjut"
-              value={data.ctaText}
-              onChange={(e) => update("ctaText", e.target.value)}
-            />
+            <div className="space-y-2">
+              <Label>Label Badge</Label>
+              <Input
+                placeholder="Contoh: Prestasi Siswa"
+                value={slide.badgeLabel}
+                onChange={(e) => updateSlide(slide.id, "badgeLabel", e.target.value)}
+              />
+            </div>
+
+            <Separator />
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Teks CTA</Label>
+                <Input
+                  placeholder="Baca Lebih Lanjut"
+                  value={slide.ctaText}
+                  onChange={(e) => updateSlide(slide.id, "ctaText", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>URL CTA</Label>
+                <Input
+                  placeholder="/berita/artikel"
+                  value={slide.ctaUrl}
+                  onChange={(e) => updateSlide(slide.id, "ctaUrl", e.target.value)}
+                />
+              </div>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="hero-ctaUrl">URL CTA</Label>
-            <Input
-              id="hero-ctaUrl"
-              placeholder="/berita/artikel-terbaru"
-              value={data.ctaUrl}
-              onChange={(e) => update("ctaUrl", e.target.value)}
-            />
-          </div>
-        </div>
+        ))}
 
-        <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Menyimpan..." : "Simpan Hero Section"}
-          </Button>
-        </div>
+        {slides.length > 0 && (
+          <div className="flex justify-end">
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? "Menyimpan..." : "Simpan Hero Section"}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

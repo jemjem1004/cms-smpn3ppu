@@ -520,42 +520,44 @@ export function MenuBuilder({ items: initialItems }: MenuBuilderProps) {
   const parentIds = menuItems.map((i) => i.id)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Menu Builder</h1>
-          <p className="text-sm text-muted-foreground">
-            Atur navigasi website dengan drag-and-drop
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Header Container Modernized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Menu Builder</h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Atur struktur navigasi publik website dengan drag-and-drop.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => openAddForm(null)}>
+        <div className="flex gap-3 relative z-10 w-full sm:w-auto">
+          <Button variant="outline" onClick={() => openAddForm(null)} className="rounded-xl border-slate-200 hover:bg-slate-50 font-medium w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            Tambah Item
+            Tambah Menu
           </Button>
-          <Button onClick={handleSaveAll} disabled={saving}>
-            {saving ? "Menyimpan..." : "Simpan Menu"}
+          <Button onClick={handleSaveAll} disabled={saving} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all w-full sm:w-auto">
+            {saving ? "Menyimpan..." : "Simpan Urutan"}
           </Button>
         </div>
       </div>
 
-      <Separator />
-
       {menuItems.length === 0 ? (
-        <div className="rounded-md border border-dashed p-8 text-center text-muted-foreground">
-          Belum ada item menu. Klik &quot;Tambah Item&quot; untuk memulai.
+        <div className="rounded-2xl border border-dashed border-slate-300 p-12 text-center text-slate-500 bg-slate-50/50">
+          <p className="font-medium">Belum ada item menu.</p>
+          <p className="text-sm text-slate-400 mt-1">Klik &quot;Tambah Menu&quot; di atas untuk memulai membuat direktori web.</p>
         </div>
       ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleParentDragEnd}
-        >
-          <SortableContext
-            items={parentIds}
-            strategy={verticalListSortingStrategy}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleParentDragEnd}
           >
-            <div className="space-y-2">
+            <SortableContext
+              items={parentIds}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3">
               {menuItems.map((parent) => (
                 <div key={parent.id} className="space-y-2">
                   <SortableMenuItem
@@ -611,6 +613,7 @@ export function MenuBuilder({ items: initialItems }: MenuBuilderProps) {
             </div>
           </SortableContext>
         </DndContext>
+        </div>
       )}
 
       {/* ─── Add/Edit Dialog ─────────────────────────────────── */}

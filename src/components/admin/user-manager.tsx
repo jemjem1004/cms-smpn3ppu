@@ -210,36 +210,40 @@ export function UserManager({ users: initialUsers }: UserManagerProps) {
   // ─── Render ─────────────────────────────────────────────────
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Pengguna</h1>
-          <p className="text-sm text-muted-foreground">
-            Kelola akun pengguna dan staf admin.
+    <div className="space-y-6 max-w-7xl mx-auto pb-10">
+      {/* Header Container Modernized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="relative z-10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Manajemen Pengguna</h1>
+          <p className="text-sm text-slate-500 font-medium mt-1">
+            Kelola akun administrator, editor, dan staf pengelola sistem.
           </p>
         </div>
-        <Button variant="outline" onClick={openAddForm}>
-          <Plus className="mr-2 h-4 w-4" />
-          Tambah Pengguna
-        </Button>
+        <div className="relative z-10 w-full sm:w-auto">
+          <Button onClick={openAddForm} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all hover:-translate-y-0.5 w-full sm:w-auto">
+            <Plus className="mr-2 h-4 w-4" />
+            Tambah Pengguna
+          </Button>
+        </div>
       </div>
 
       {users.length === 0 ? (
-        <div className="rounded-md border border-dashed p-12 text-center text-muted-foreground">
-          <Users className="mx-auto mb-3 h-12 w-12" />
-          <p>Belum ada data pengguna.</p>
-          <p className="text-sm">Klik &quot;Tambah Pengguna&quot; untuk memulai.</p>
+        <div className="rounded-2xl border border-dashed border-slate-300 p-12 text-center text-slate-500 bg-slate-50/50">
+          <Users className="mx-auto mb-3 h-12 w-12 text-slate-400" />
+          <p className="font-medium">Belum ada data pengguna.</p>
+          <p className="text-sm text-slate-400 mt-1">Klik &quot;Tambah Pengguna&quot; untuk memulai.</p>
         </div>
       ) : (
-        <div className="rounded-md border">
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-slate-50/50">
               <TableRow>
-                <TableHead>Nama</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Aksi</TableHead>
+                <TableHead className="font-bold text-slate-700">Nama</TableHead>
+                <TableHead className="font-bold text-slate-700">Email</TableHead>
+                <TableHead className="font-bold text-slate-700">Role</TableHead>
+                <TableHead className="font-bold text-slate-700">Status</TableHead>
+                <TableHead className="text-right font-bold text-slate-700">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
