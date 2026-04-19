@@ -9,11 +9,10 @@ export const metadata = {
 }
 
 export default async function KontenPage() {
-  const [heroResult, profileResult, principalResult, departmentResult, pages, articles] = await Promise.all([
+  const [heroResult, profileResult, principalResult, pages, articles] = await Promise.all([
     getInstitutionalContent("HERO"),
     getInstitutionalContent("PROFILE"),
     getInstitutionalContent("PRINCIPAL_MESSAGE"),
-    getInstitutionalContent("DEPARTMENT"),
     getPagesForMenu(),
     prisma.article.findMany({
       where: { status: "PUBLISHED", isDeleted: false },
@@ -28,7 +27,6 @@ export default async function KontenPage() {
       heroContent={heroResult.success ? heroResult.data : null}
       profileContent={profileResult.success ? profileResult.data : null}
       principalContent={principalResult.success ? principalResult.data : null}
-      departmentContent={departmentResult.success ? departmentResult.data : null}
       pages={pages}
       articles={articles}
     />

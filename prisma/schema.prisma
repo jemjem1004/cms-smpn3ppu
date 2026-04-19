@@ -148,6 +148,24 @@ enum AnnouncementType {
   SUCCESS
 }
 
+model Department {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  headName    String?
+  headPhoto   String?
+  headTitle   String?
+  kompetensi  String[] @default([])
+  bidangKerja String[] @default([])
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+}
+
 model Page {
   id          String   @id @default(cuid())
   title       String

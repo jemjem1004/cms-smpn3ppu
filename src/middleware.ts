@@ -16,6 +16,7 @@ const ROUTE_PERMISSIONS: Record<string, string[]> = {
   "/admin/guru": ["SUPER_ADMIN", "EDITOR"],
   "/admin/halaman": ["SUPER_ADMIN", "EDITOR"],
   "/admin/pengumuman": ["SUPER_ADMIN", "EDITOR"],
+  "/admin/jurusan": ["SUPER_ADMIN", "EDITOR"],
   "/admin/berita": ["SUPER_ADMIN", "EDITOR", "CONTRIBUTOR"],
 }
 

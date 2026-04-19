@@ -64,11 +64,9 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#001122]/90 via-[#002244]/80 to-[#002244]/40" />
 
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white shadow-xl">
-            <span className="text-[#002244] font-extrabold text-[11px] text-center leading-tight">Astro</span>
-          </div>
+          <img src="/astro-logo.png" alt="Astro School Management" className="w-12 h-12 object-contain brightness-0 invert" />
           <div className="leading-none mt-1">
-            <h1 className="font-extrabold text-2xl text-white tracking-tight">Astro School</h1>
+            <h1 className="font-extrabold text-2xl text-white tracking-tight">Astro School Management</h1>
           </div>
         </div>
 
@@ -90,9 +88,7 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 xl:p-16 relative">
         {/* Mobile Logo Fallback */}
         <div className="absolute top-8 left-6 sm:left-12 lg:hidden flex items-center gap-2">
-          <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center border border-[#002244]">
-            <span className="text-[#002244] font-bold text-[8px] text-center leading-tight">Astro</span>
-          </div>
+          <img src="/astro-logo.png" alt="Astro School" className="w-8 h-8 object-contain" />
           <span className="font-extrabold text-slate-900 tracking-tight text-sm">Astro <span className="text-red-600">School</span></span>
         </div>
 

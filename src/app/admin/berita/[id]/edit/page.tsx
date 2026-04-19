@@ -7,20 +7,21 @@ import { ArticleForm } from "@/components/admin/article-form"
 import type { SessionWithRole } from "@/types"
 
 export const metadata = {
-  title: "Edit Artikel — Admin SMKN 1 Surabaya",
+  title: "Edit Artikel — Admin",
   description: "Edit artikel berita",
 }
 
 interface EditPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function EditPage({ params }: EditPageProps) {
+  const { id } = await params
   const session = (await auth()) as SessionWithRole | null
   const role = (session?.user?.role ?? "CONTRIBUTOR") as Role
 
   const [articleResult, categoriesResult] = await Promise.all([
-    getArticleById(params.id),
+    getArticleById(id),
     getCategories(),
   ])
 

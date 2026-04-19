@@ -14,12 +14,13 @@ import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ImageUploader } from "@/components/admin/image-uploader"
 import { updateInstitutionalContent } from "@/actions/content"
-import type { HeroContent, HeroSlide, ProfileContent, PrincipalContent, DepartmentContent } from "@/types"
+import type { HeroContent, HeroSlide, ProfileContent, PrincipalContent } from "@/types"
 
 const STATIC_ROUTES = [
   { label: "Beranda", url: "/" },
   { label: "Berita", url: "/berita" },
   { label: "Galeri", url: "/galeri" },
+  { label: "Jurusan", url: "/jurusan" },
   { label: "Guru & Tendik", url: "/guru-tendik" },
   { label: "Pengumuman", url: "/pengumuman" },
   { label: "Agenda", url: "/agenda" },
@@ -30,7 +31,6 @@ interface ContentManagerProps {
   heroContent: HeroContent | null
   profileContent: ProfileContent | null
   principalContent: PrincipalContent | null
-  departmentContent: DepartmentContent | null
   pages: { title: string; slug: string }[]
   articles: { title: string; slug: string }[]
 }
@@ -56,7 +56,6 @@ export function ContentManager({
   heroContent,
   profileContent,
   principalContent,
-  departmentContent,
   pages,
   articles,
 }: ContentManagerProps) {
@@ -79,11 +78,10 @@ export function ContentManager({
       </div>
 
       <Tabs defaultValue="hero" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-100/70 p-1.5 rounded-2xl border border-slate-200/50">
+        <TabsList className="grid w-full grid-cols-3 bg-slate-100/70 p-1.5 rounded-2xl border border-slate-200/50">
           <TabsTrigger value="hero" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Hero Section</TabsTrigger>
           <TabsTrigger value="profil" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Profil & Video</TabsTrigger>
           <TabsTrigger value="prakata" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Prakata Kepsek</TabsTrigger>
-          <TabsTrigger value="jurusan" className="rounded-xl data-[state=active]:shadow-sm data-[state=active]:font-bold data-[state=active]:bg-[#002244] data-[state=active]:text-white transition-all">Jurusan</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero">
@@ -96,10 +94,6 @@ export function ContentManager({
 
         <TabsContent value="prakata">
           <PrakataTab initialData={principalContent ?? defaultPrincipal} />
-        </TabsContent>
-
-        <TabsContent value="jurusan">
-          <JurusanTab initialData={departmentContent} />
         </TabsContent>
       </Tabs>
     </div>
@@ -551,129 +545,5 @@ function PrakataTab({ initialData }: { initialData: PrincipalContent }) {
 // ============================================
 // Jurusan Tab — Department Content
 // ============================================
-
-interface Department {
-  id: string
-  name: string
-  description: string
-  imageUrl: string
-}
-
-const defaultDepartment: DepartmentContent = { departments: [] }
-
-function JurusanTab({ initialData }: { initialData: DepartmentContent | null }) {
-  const [departments, setDepartments] = useState<Department[]>(
-    initialData?.departments ?? []
-  )
-  const [saving, setSaving] = useState(false)
-
-  function addDepartment() {
-    setDepartments((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), name: "", description: "", imageUrl: "" },
-    ])
-  }
-
-  function removeDepartment(id: string) {
-    setDepartments((prev) => prev.filter((d) => d.id !== id))
-  }
-
-  function updateDepartment(id: string, field: keyof Department, value: string) {
-    setDepartments((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, [field]: value } : d))
-    )
-  }
-
-  async function handleSave() {
-    setSaving(true)
-    try {
-      const result = await updateInstitutionalContent("DEPARTMENT", { departments })
-      if (result.success) {
-        toast.success("Data jurusan berhasil disimpan")
-      } else {
-        toast.error(result.error || "Gagal menyimpan data jurusan")
-      }
-    } catch {
-      toast.error("Terjadi kesalahan saat menyimpan")
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div>
-          <CardTitle>Jurusan / Program Keahlian</CardTitle>
-          <CardDescription className="mt-1">
-            Daftar jurusan atau program keahlian yang ditawarkan sekolah.
-          </CardDescription>
-        </div>
-        <Button onClick={addDepartment} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-md transition-all active:scale-95">
-          <Plus className="mr-2 h-4 w-4" /> Tambah Jurusan
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {departments.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-slate-500 bg-slate-50/50">
-            <p className="font-medium">Belum ada jurusan.</p>
-            <p className="text-sm mt-1 text-slate-400">Klik &quot;Tambah Jurusan&quot; untuk menambahkan program keahlian.</p>
-          </div>
-        )}
-
-        {departments.map((dept, index) => (
-          <div key={dept.id} className="rounded-2xl border border-slate-200/60 bg-slate-50/30 p-5 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
-              <span className="text-sm font-bold text-[#002244]">Jurusan #{index + 1}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive hover:bg-red-50 rounded-lg h-8"
-                onClick={() => removeDepartment(dept.id)}
-              >
-                Hapus
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Nama Jurusan</Label>
-                <Input
-                  placeholder="Teknik Komputer dan Jaringan"
-                  value={dept.name}
-                  onChange={(e) => updateDepartment(dept.id, "name", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Gambar Jurusan</Label>
-                <ImageUploader
-                  currentImageUrl={dept.imageUrl || undefined}
-                  onUploadComplete={(url) => updateDepartment(dept.id, "imageUrl", url)}
-                  maxSizeMB={3}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Deskripsi</Label>
-              <Textarea
-                placeholder="Deskripsi singkat program keahlian..."
-                rows={2}
-                value={dept.description}
-                onChange={(e) => updateDepartment(dept.id, "description", e.target.value)}
-              />
-            </div>
-          </div>
-        ))}
-
-        {departments.length > 0 && (
-          <div className="flex justify-end pt-4">
-            <Button onClick={handleSave} disabled={saving} className="bg-[#002244] hover:bg-[#003366] text-white rounded-xl shadow-lg shadow-[#002244]/20 font-bold transition-all hover:-translate-y-0.5 px-6">
-              {saving ? "Menyimpan..." : "Simpan Data Jurusan"}
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
+// Jurusan Tab — now uses DepartmentManager component
+// ============================================

@@ -6,8 +6,13 @@ export const metadata = {
   title: "Edit Halaman — Admin SMKN 1 Surabaya",
 }
 
-export default async function EditPage({ params }: { params: { id: string } }) {
-  const result = await getPageById(params.id)
+interface EditPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function EditPage({ params }: EditPageProps) {
+  const { id } = await params
+  const result = await getPageById(id)
 
   if (!result.success || !result.data) {
     notFound()

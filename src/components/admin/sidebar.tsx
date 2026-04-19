@@ -64,9 +64,9 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Konten Halaman", href: "/admin/konten", icon: FileText, permission: "content:manage" },
       { label: "Halaman Kustom", href: "/admin/halaman", icon: BookOpen, permission: "page:manage" },
       { label: "Berita", href: "/admin/berita", icon: Newspaper, permission: "article:create" },
+      { label: "Jurusan", href: "/admin/jurusan", icon: GraduationCap, permission: "content:manage" },
       { label: "Galeri", href: "/admin/galeri", icon: Image, permission: "gallery:manage" },
-      { label: "Guru & Tendik", href: "/admin/guru", icon: GraduationCap, permission: "staff:manage" },
-    ],
+      { label: "Guru & Tendik", href: "/admin/guru", icon: Users, permission: "staff:manage" },    ],
   },
   {
     label: "Informasi Publik",
@@ -253,9 +253,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
         </button>
 
         <div className={cn("flex h-16 items-center border-b border-white/5 transition-all relative z-10", isMinimized ? "justify-center px-4" : "gap-3 px-6")}>
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center border-2 border-white/20 shrink-0 shadow-lg">
-            <LayoutDashboard className="h-4 w-4 text-white" />
-          </div>
+          <img src="/astro-logo.png" alt="Astro School" className="w-8 h-8 object-contain brightness-0 invert shrink-0" />
           {!isMinimized && (
             <div className="leading-none mt-0.5 overflow-hidden">
               <span className="font-extrabold text-sm text-white block tracking-tight whitespace-nowrap drop-shadow-sm">ASTRO SCHOOL</span>
@@ -303,9 +301,7 @@ export function AdminSidebar({ user, children }: AdminSidebarProps) {
           {/* Mobile Sheet Panel with Navy Theme */}
           <SheetContent side="left" className="w-[260px] p-0 bg-[#001b36] text-white border-r-[#001122]">
             <SheetHeader className="h-14 flex-row items-center gap-3 px-6 border-b border-white/5 space-y-0">
-              <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center border-2 border-white/20 shrink-0">
-                <LayoutDashboard className="h-3.5 w-3.5 text-white" />
-              </div>
+              <img src="/astro-logo.png" alt="Astro School" className="w-7 h-7 object-contain brightness-0 invert shrink-0" />
               <div className="leading-none mt-0.5 text-left">
                 <SheetTitle className="font-extrabold text-xs text-white tracking-tight m-0">ASTRO SCHOOL</SheetTitle>
               </div>

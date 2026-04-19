@@ -67,6 +67,7 @@ interface LocalMenuItem {
 interface MenuBuilderProps {
   items: MenuItemWithChildren[]
   pages: { title: string; slug: string }[]
+  departments: { name: string; slug: string }[]
 }
 
 interface FormState {
@@ -178,6 +179,7 @@ const STATIC_ROUTES = [
   { label: "Beranda", url: "/" },
   { label: "Berita", url: "/berita" },
   { label: "Galeri", url: "/galeri" },
+  { label: "Jurusan", url: "/jurusan" },
   { label: "Guru & Tendik", url: "/guru-tendik" },
   { label: "Pengumuman", url: "/pengumuman" },
   { label: "Agenda", url: "/agenda" },
@@ -202,7 +204,7 @@ function isValidUrl(url: string, type: "INTERNAL" | "EXTERNAL"): boolean {
 
 // ─── Main Component ──────────────────────────────────────────────
 
-export function MenuBuilder({ items: initialItems, pages }: MenuBuilderProps) {
+export function MenuBuilder({ items: initialItems, pages, departments }: MenuBuilderProps) {
   const [menuItems, setMenuItems] = useState<LocalMenuItem[]>(() =>
     initialItems.map((item) => ({
       id: item.id,
@@ -486,7 +488,8 @@ export function MenuBuilder({ items: initialItems, pages }: MenuBuilderProps) {
             label: child.label,
             url: child.url,
             type: child.type,
-            parentId: parent.id,
+            // Kirim index parent sebagai parentId — server akan resolve berdasarkan posisi
+            parentId: `__idx__${pIdx}`,
             order: cIdx,
           })
         })
@@ -713,6 +716,20 @@ export function MenuBuilder({ items: initialItems, pages }: MenuBuilderProps) {
                           <SelectItem key={p.slug} value={`/halaman/${p.slug}`}>
                             {p.title}
                             <span className="ml-2 text-xs text-muted-foreground">/halaman/{p.slug}</span>
+                          </SelectItem>
+                        ))}
+                      </>
+                    )}
+                    {departments.length > 0 && (
+                      <>
+                        <Separator className="my-1" />
+                        <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">
+                          Jurusan
+                        </div>
+                        {departments.map((d) => (
+                          <SelectItem key={d.slug} value={`/jurusan/${d.slug}`}>
+                            {d.name}
+                            <span className="ml-2 text-xs text-muted-foreground">/jurusan/{d.slug}</span>
                           </SelectItem>
                         ))}
                       </>

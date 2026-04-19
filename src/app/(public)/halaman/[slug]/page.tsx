@@ -5,9 +5,10 @@ import { getPageBySlug } from "@/actions/page"
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }): Promise<Metadata> {
-  const page = await getPageBySlug(params.slug)
+  const { slug } = await params
+  const page = await getPageBySlug(slug)
   if (!page) return { title: "Halaman Tidak Ditemukan" }
 
   const title = page.metaTitle || page.title
@@ -28,9 +29,10 @@ export async function generateMetadata({
 export default async function PublicPageDetail({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const page = await getPageBySlug(params.slug)
+  const { slug } = await params
+  const page = await getPageBySlug(slug)
 
   if (!page) {
     notFound()

@@ -2,10 +2,10 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
-import { Calendar, User, Newspaper, ChevronRight, ChevronLeft } from "lucide-react"
+import { ChevronRight, ChevronLeft, Newspaper } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Berita & Artikel",
+  title: "Berita",
   description: "Kumpulan berita dan artikel terbaru dari sekolah.",
 }
 
@@ -52,94 +52,70 @@ export default async function BeritaPage({
 
   return (
     <main className="bg-white min-h-screen">
-      
-      {/* Premium Hero Header */}
-      <section className="relative bg-[#001833] pt-20 pb-24 overflow-hidden border-b-2 border-[#FFC107]/20">
-        {/* Ambient background decoration */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFC107]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-6">
-              <span className="h-[1px] w-8 bg-[#FFC107]" />
-              <span className="text-[#FFC107] text-xs font-bold uppercase tracking-widest">Informasi Terkini</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-6 leading-tight">
-              Berita & <span className="text-[#FFC107]">Artikel</span>
-            </h1>
-            <p className="text-white/50 text-base md:text-lg max-w-xl mx-auto md:mx-0 leading-relaxed">
-              Jelajahi kumpulan berita terbaru, pengumuman, dan artikel inspiratif seputar kegiatan sekolah kami.
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Content Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      {/* Header — konsisten dengan halaman lain */}
+      <header className="bg-[#002244] relative pt-10 pb-10 md:pt-12 md:pb-12 border-b-[3px] border-yellow-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav aria-label="Breadcrumb" className="text-blue-300/60 text-xs font-bold tracking-widest uppercase mb-3">
+            <Link href="/" className="hover:text-white transition-colors">Beranda</Link>
+            <span className="mx-2 opacity-40">/</span>
+            <span className="text-blue-200/80">Berita</span>
+          </nav>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-snug">
+            Berita &amp; Artikel
+          </h1>
+          <p className="text-blue-200/60 text-sm mt-2">
+            Informasi terbaru seputar kegiatan dan perkembangan sekolah
+          </p>
+        </div>
+      </header>
+
+      {/* Content */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {articles.length > 0 ? (
           <>
-            {/* Article Grid - Clean & Modern Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map((article) => {
-                const excerpt = stripHtml(article.content).slice(0, 120)
+                const excerpt = stripHtml(article.content).slice(0, 150)
                 return (
                   <Link
                     key={article.id}
                     href={`/berita/${article.slug}`}
-                    className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-[#FFC107]/30 hover:shadow-2xl hover:shadow-[#002244]/5 transition-all duration-500"
+                    className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-md transition-shadow"
                   >
-                    {/* Thumbnail with Overlay */}
-                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                    {/* Thumbnail */}
+                    <div className="relative aspect-[16/9] bg-gray-100">
                       {article.thumbnailUrl ? (
                         <Image
                           src={article.thumbnailUrl}
                           alt={article.title}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
-                        <div className="flex items-center justify-center h-full text-slate-200">
-                          <Newspaper className="h-12 w-12" />
+                        <div className="flex items-center justify-center h-full">
+                          <Newspaper className="h-10 w-10 text-gray-300" />
                         </div>
                       )}
-                      
-                      {/* Category Badge Floating */}
                       {article.category && (
-                        <div className="absolute top-4 left-4 z-20">
-                          <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-md text-[#002244] rounded-lg shadow-sm border border-white/50">
-                            {article.category.name}
-                          </span>
-                        </div>
+                        <span className="absolute top-3 left-3 text-xs font-semibold text-[#FFC107] bg-[#002244]/80 px-2 py-0.5 rounded">
+                          {article.category.name}
+                        </span>
                       )}
-                      
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#002244]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
 
-                    {/* Content Area - More compact */}
-                    <div className="p-4 flex flex-col flex-1">
-                      {/* Meta Info - Tighter */}
-                      <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-2.5 w-2.5 text-[#FFC107]" />
-                          <span>{formatDate(article.publishedAt)}</span>
-                        </div>
-                      </div>
-
-                      <h2 className="text-base font-bold text-[#002244] leading-tight mb-2 group-hover:text-[#001833] transition-colors line-clamp-2">
+                    {/* Content */}
+                    <div className="p-5">
+                      <h2 className="text-base font-bold text-[#002244] group-hover:text-blue-600 line-clamp-2 transition-colors leading-snug mb-2">
                         {article.title}
                       </h2>
-                      
-                      <p className="text-slate-500 text-[13px] leading-relaxed line-clamp-2 mb-4 flex-1">
-                        {excerpt}{stripHtml(article.content).length > 120 ? "..." : ""}
+                      <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed mb-4">
+                        {excerpt}{stripHtml(article.content).length > 150 ? "…" : ""}
                       </p>
-
-                      {/* Read More Link - Minimalist */}
-                      <div className="mt-auto pt-3 border-t border-slate-50 flex items-center gap-1.5 text-[#002244] group-hover:text-[#FFC107] transition-colors text-[10px] font-bold uppercase tracking-widest">
-                        <span>Baca</span>
-                        <ChevronRight className="h-3 w-3" />
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                        <span>{article.author.name}</span>
+                        <time>{formatDate(article.publishedAt)}</time>
                       </div>
                     </div>
                   </Link>
@@ -147,56 +123,49 @@ export default async function BeritaPage({
               })}
             </div>
 
-            {/* Modern Pagination */}
+            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-20 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-slate-100 pt-8">
-                <span className="text-sm text-slate-400 font-medium order-2 sm:order-1">
-                  Halaman <span className="text-[#002244] font-bold">{currentPage}</span> dari <span className="text-[#002244] font-bold">{totalPages}</span>
+              <nav className="mt-12 flex items-center justify-between border-t border-gray-100 pt-8">
+                <span className="text-sm text-gray-400">
+                  Halaman <span className="font-bold text-[#002244]">{currentPage}</span> dari{" "}
+                  <span className="font-bold text-[#002244]">{totalPages}</span>
                 </span>
-                
-                <nav className="flex items-center gap-3 order-1 sm:order-2">
+                <div className="flex items-center gap-3">
                   {currentPage > 1 ? (
                     <Link
                       href={`/berita?page=${currentPage - 1}`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-[#002244] hover:bg-slate-50 hover:border-[#002244] transition-all"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 text-sm font-semibold text-[#002244] hover:bg-gray-50 transition-colors"
                     >
-                      <ChevronLeft className="h-4 w-4" />
-                      <span>Kembali</span>
+                      <ChevronLeft className="h-4 w-4" /> Sebelumnya
                     </Link>
                   ) : (
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-100 text-sm font-bold text-slate-200 cursor-not-allowed">
-                      <ChevronLeft className="h-4 w-4" />
-                      <span>Kembali</span>
-                    </div>
+                    <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-100 text-sm font-semibold text-gray-300 cursor-not-allowed">
+                      <ChevronLeft className="h-4 w-4" /> Sebelumnya
+                    </span>
                   )}
-
                   {currentPage < totalPages ? (
                     <Link
                       href={`/berita?page=${currentPage + 1}`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#002244] text-white text-sm font-bold hover:bg-[#001833] shadow-lg shadow-[#002244]/10 transition-all"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#002244] text-white text-sm font-semibold hover:bg-[#003366] transition-colors"
                     >
-                      <span>Selanjutnya</span>
-                      <ChevronRight className="h-4 w-4" />
+                      Selanjutnya <ChevronRight className="h-4 w-4" />
                     </Link>
                   ) : (
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-100 text-slate-300 text-sm font-bold cursor-not-allowed">
-                      <span>Selanjutnya</span>
-                      <ChevronRight className="h-4 w-4" />
-                    </div>
+                    <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gray-100 text-gray-300 text-sm font-semibold cursor-not-allowed">
+                      Selanjutnya <ChevronRight className="h-4 w-4" />
+                    </span>
                   )}
-                </nav>
-              </div>
+                </div>
+              </nav>
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-32 text-center border-2 border-dashed border-slate-100 rounded-3xl">
-            <Newspaper className="h-16 w-16 text-slate-100 mb-6" />
-            <h3 className="text-xl font-bold text-[#002244] mb-2">Belum Ada Berita</h3>
-            <p className="text-slate-400 max-w-xs mx-auto text-sm">Maaf, saat ini belum ada artikel atau berita yang diterbitkan. Silakan kembali lagi nanti.</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <Newspaper className="h-14 w-14 text-gray-300 mb-4" />
+            <p className="text-gray-400 text-lg font-medium">Belum ada berita</p>
           </div>
         )}
       </section>
-
     </main>
   )
 }

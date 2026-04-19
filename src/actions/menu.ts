@@ -106,20 +106,12 @@ export async function saveMenuItems(
     const parents = items.filter((i) => i.parentId === null)
     const children = items.filter((i) => i.parentId !== null)
 
-    // Collect unique old parentId references from children, in order of first appearance
-    const uniqueOldParentIds: string[] = []
-    for (const child of children) {
-      if (!uniqueOldParentIds.includes(child.parentId!)) {
-        uniqueOldParentIds.push(child.parentId!)
-      }
-    }
-
     const result = await prisma.$transaction(async (tx) => {
       await tx.menuItem.deleteMany({})
 
-      // Create parents and build old→new ID mapping by position
-      // uniqueOldParentIds[i] maps to parents[i]
-      const oldToNewId = new Map<string, string>()
+      // Create parents indexed by their order (pIdx)
+      // Client sends children with parentId = "__idx__N" where N = parent's order/index
+      const indexToNewId = new Map<number, string>()
 
       for (let i = 0; i < parents.length; i++) {
         const parent = parents[i]
@@ -132,15 +124,15 @@ export async function saveMenuItems(
             parentId: null,
           },
         })
-        // Map the old local ID (at position i) to the new DB id
-        if (uniqueOldParentIds[i]) {
-          oldToNewId.set(uniqueOldParentIds[i], created.id)
-        }
+        // Map parent index to new DB id
+        indexToNewId.set(parent.order, created.id)
       }
 
-      // Create children with resolved parent IDs
+      // Create children — parentId format is "__idx__N" where N = parent order
       for (const child of children) {
-        const newParentId = oldToNewId.get(child.parentId!)
+        const parentRef = child.parentId! // format: "__idx__N"
+        const parentIdx = parseInt(parentRef.replace("__idx__", ""), 10)
+        const newParentId = indexToNewId.get(parentIdx)
         if (!newParentId) {
           throw new Error(`Gagal memetakan parent untuk item "${child.label}"`)
         }
