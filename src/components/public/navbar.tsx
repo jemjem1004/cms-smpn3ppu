@@ -13,81 +13,91 @@ export async function Navbar() {
   const { identity } = settings
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all duration-300">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px]">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 shrink-0 group">
+        <div className="flex items-center h-20">
+
+          {/* Logo + Identity — kiri */}
+          <Link href="/" className="flex items-center gap-3 shrink-0 mr-auto group">
             {identity.logoUrl ? (
               <Image
                 src={identity.logoUrl}
                 alt={identity.name}
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md transform group-hover:scale-105 transition-transform duration-300"
+                width={44}
+                height={44}
+                className="w-11 h-11 object-contain"
               />
             ) : (
-              <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-white shadow-md shrink-0 transform group-hover:scale-105 transition-transform duration-300">
-                <span className="text-[#002244] font-extrabold text-[9px] text-center leading-tight">
-                  {identity.shortName.split(" ").map(w => w[0]).join("").slice(0, 4)}
+              <div className="w-11 h-11 bg-[#002244] rounded-xl flex items-center justify-center shrink-0">
+                <span className="text-white font-extrabold text-xs">
+                  {identity.shortName.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
                 </span>
               </div>
             )}
-            <div className="leading-none">
-              <h1 className="font-extrabold text-xl text-[#002244] tracking-tight">{identity.shortName}</h1>
+            <div>
+              <span className="font-bold text-[15px] text-[#002244] block leading-tight tracking-tight">
+                {identity.shortName}
+              </span>
               {identity.tagline && (
-                <p className="text-[9px] tracking-widest text-red-600 font-bold uppercase mt-1">{identity.tagline}</p>
+                <span className="text-[10px] text-slate-400 font-medium leading-none mt-0.5 block">
+                  {identity.tagline}
+                </span>
               )}
             </div>
           </Link>
 
-          {/* Desktop navigation */}
-          <nav className="hidden lg:block" aria-label="Menu navigasi utama">
-            <ul className="flex items-center gap-2">
+          {/* Desktop navigation — kanan */}
+          <nav className="hidden lg:flex items-center ml-auto" aria-label="Menu navigasi utama">
+            <ul className="flex items-center gap-1">
               {items.map((item) => (
-                <li key={item.id} className="relative group">
+                <li key={item.id} className="relative group/item">
                   {item.children.length > 0 ? (
                     <>
                       <button
-                        className="flex items-center gap-1.5 px-3 py-2 text-[0.85rem] font-semibold text-slate-600 hover:text-blue-600 transition-colors"
+                        className="flex items-center gap-1 px-4 py-2 rounded-lg text-[14px] font-medium text-slate-600 hover:bg-[#002244] hover:text-white transition-all duration-150"
                         aria-haspopup="true"
                       >
                         {item.label}
-                        <ChevronDown className="h-3.5 w-3.5 opacity-70 group-hover:opacity-100 transition-transform group-hover:rotate-180" />
-                      </button>                      <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
-                        <ul className="bg-white border border-slate-100 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] min-w-[220px] py-2.5 transform origin-top-left animate-in fade-in slide-in-from-top-2 duration-200">
+                        <ChevronDown className="h-3.5 w-3.5 opacity-50 group-hover/item:opacity-100 group-hover/item:rotate-180 transition-all duration-200" />
+                      </button>
+
+                      {/* Dropdown */}
+                      <div className="absolute right-0 top-full pt-2 hidden group-hover/item:block z-50">
+                        <ul className="bg-white rounded-xl border border-black/[0.06] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.12)] min-w-[220px] py-1.5 overflow-hidden">
                           {item.children.map((child) => (
-                             <li key={child.id}>
-                              <Link
-                                href={child.url}
-                                className="block px-5 py-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-slate-50 font-medium transition-colors"
-                                target={child.type === "EXTERNAL" ? "_blank" : undefined}
-                                rel={child.type === "EXTERNAL" ? "noopener noreferrer" : undefined}
-                              >
-                                {child.label}
-                              </Link>
+                            <li key={child.id}>
+                              {child.url === "#" ? (
+                                <span className="block px-4 py-2.5 text-[13px] text-slate-300 cursor-default">
+                                  {child.label}
+                                </span>
+                              ) : (
+                                <Link
+                                  href={child.url}
+                                  className="block px-4 py-2.5 text-[13px] text-slate-600 hover:bg-[#002244] hover:text-white font-medium transition-all duration-150 mx-1.5 rounded-lg"
+                                  target={child.type === "EXTERNAL" ? "_blank" : undefined}
+                                  rel={child.type === "EXTERNAL" ? "noopener noreferrer" : undefined}
+                                >
+                                  {child.label}
+                                </Link>
+                              )}
                             </li>
                           ))}
                         </ul>
                       </div>
                     </>
+                  ) : item.url === "#" ? (
+                    <span className="px-4 py-2 rounded-lg text-[14px] font-medium text-slate-300 cursor-default">
+                      {item.label}
+                    </span>
                   ) : (
-                    item.url === "#" ? (
-                      <button
-                        className="block px-3 py-2 text-[0.85rem] font-semibold text-slate-600 cursor-default"
-                      >
-                        {item.label}
-                      </button>
-                    ) : (
                     <Link
                       href={item.url}
-                      className="block px-3 py-2 text-[0.85rem] font-semibold text-slate-600 hover:text-blue-600 transition-colors"
+                      className="px-4 py-2 rounded-lg text-[14px] font-medium text-slate-600 hover:bg-[#002244] hover:text-white transition-all duration-150"
                       target={item.type === "EXTERNAL" ? "_blank" : undefined}
                       rel={item.type === "EXTERNAL" ? "noopener noreferrer" : undefined}
                     >
                       {item.label}
                     </Link>
-                    )
                   )}
                 </li>
               ))}
