@@ -108,7 +108,7 @@ function SingleSlide({ slide }: { slide: HeroSlide }) {
           </h2>
 
           {/* Description */}
-          <p className="text-white/70 text-sm md:text-base leading-relaxed mb-8 max-w-md">
+          <p className="text-white/70 text-sm md:text-base leading-relaxed mb-8 max-w-md line-clamp-3">
             {slide.description}
           </p>
 

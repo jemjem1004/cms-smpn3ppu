@@ -255,11 +255,13 @@ function HeroTab({ initialData, pages, articles }: {
                   <div className="space-y-2">
                     <Label>Deskripsi</Label>
                     <Textarea
-                      placeholder="Deskripsi singkat slide"
+                      placeholder="Deskripsi singkat slide (maks. 200 karakter)"
                       rows={2}
                       value={slide.description}
                       onChange={(e) => updateSlide(slide.id, "description", e.target.value)}
+                      maxLength={200}
                     />
+                    <p className="text-xs text-muted-foreground text-right">{slide.description.length}/200</p>
                   </div>
 
                   <div className="space-y-2">
