@@ -100,5 +100,5 @@ export const fileUploadSchema = z.object({
   }),
   size: z
     .number()
-    .max(5 * 1024 * 1024, "Ukuran file melebihi 5MB"),
+    .max(20 * 1024 * 1024, "Ukuran file melebihi 20MB"),
 })

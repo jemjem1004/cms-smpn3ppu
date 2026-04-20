@@ -269,7 +269,7 @@ function HeroTab({ initialData, pages, articles }: {
                     <ImageUploader
                       currentImageUrl={slide.imageUrl || undefined}
                       onUploadComplete={(url) => updateSlide(slide.id, "imageUrl", url)}
-                      maxSizeMB={5}
+                      
                     />
                   </div>
 
@@ -527,11 +527,16 @@ function PrakataTab({ initialData }: { initialData: PrincipalContent }) {
           <ImageUploader
             currentImageUrl={data.photoUrl || undefined}
             onUploadComplete={(url) => update("photoUrl", url)}
-            maxSizeMB={3}
           />
-          <p className="text-xs text-muted-foreground">
-            Gunakan foto PNG transparan (tanpa background). Rekomendasi ukuran: <strong>600×800px</strong> (rasio 3:4, portrait). Foto akan tampil menonjol di section prakata landing page.
-          </p>
+          <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 space-y-1.5 text-xs text-blue-800">
+            <p className="font-bold">📸 Panduan foto untuk tampilan terbaik:</p>
+            <ul className="space-y-1 text-blue-700 list-disc list-inside">
+              <li>Format <strong>PNG dengan background transparan</strong> — foto menyatu langsung dengan background biru section</li>
+              <li>Rasio <strong>portrait (2:3)</strong> — contoh ukuran: <strong>600×900px</strong> atau <strong>800×1200px</strong></li>
+              <li>Subjek dari <strong>pinggang ke atas</strong> — bukan full body atau close-up wajah</li>
+              <li>Untuk menghapus background foto, gunakan <a href="https://remove.bg" target="_blank" rel="noopener noreferrer" className="underline font-semibold">remove.bg</a> (gratis)</li>
+            </ul>
+          </div>
         </div>
 
         <div className="flex justify-end pt-4">

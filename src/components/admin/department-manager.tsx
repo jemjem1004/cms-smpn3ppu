@@ -456,7 +456,7 @@ export function DepartmentManager({ initialItems }: { initialItems: Department[]
               <ImageUploader 
                 currentImageUrl={form.imageUrl || undefined} 
                 onUploadComplete={(url) => setForm((f) => ({ ...f, imageUrl: url }))} 
-                maxSizeMB={3} 
+                 
               />
             </div>
 
@@ -474,7 +474,7 @@ export function DepartmentManager({ initialItems }: { initialItems: Department[]
               </div>
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-slate-600">Foto Ketua</Label>
-                <ImageUploader currentImageUrl={form.headPhoto || undefined} onUploadComplete={(url) => setForm((f) => ({ ...f, headPhoto: url }))} maxSizeMB={2} />
+                <ImageUploader currentImageUrl={form.headPhoto || undefined} onUploadComplete={(url) => setForm((f) => ({ ...f, headPhoto: url }))}  />
               </div>
             </div>
 

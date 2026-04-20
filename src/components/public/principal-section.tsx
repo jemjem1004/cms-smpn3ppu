@@ -24,73 +24,51 @@ export async function PrincipalSection() {
   }
 
   return (
-    <section
-      className="relative text-white overflow-hidden"
-      style={{
-        backgroundColor: "#004d80",
-        backgroundImage:
-          "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.12) 1px, transparent 0)",
-        backgroundSize: "20px 20px",
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-end gap-6 lg:gap-10">
+    <section className="relative text-white overflow-hidden bg-[#002244]">
 
-          {/* Teks — kiri */}
-          <div className="flex-1 py-12 md:py-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Prakata Kepala Sekolah
-            </h2>
-            <div
-              className="text-sm md:text-[15px] leading-relaxed text-blue-100/90"
-              dangerouslySetInnerHTML={{ __html: principal.message }}
-            />
-            <div className="mt-4">
-              <p className="font-bold text-base">{principal.name}</p>
-              <p className="text-sm text-yellow-300">{principal.title}</p>
-            </div>
+      {/* Foto desktop — background kanan */}
+      {principal.photoUrl && (
+        <div className="hidden lg:block absolute top-0 right-0 bottom-0 w-[42%]">
+          <Image
+            src={principal.photoUrl}
+            alt={principal.name}
+            fill
+            sizes="42vw"
+            className="object-cover object-top"
+          />
+          <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[#002244] to-transparent" />
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className={`py-14 md:py-16 ${principal.photoUrl ? "lg:w-[55%]" : ""}`}>
+          <h2 className="text-2xl md:text-3xl font-bold mb-5">
+            Prakata Kepala Sekolah
+          </h2>
+          <div
+            className="text-sm md:text-[15px] leading-relaxed text-white/75"
+            dangerouslySetInnerHTML={{ __html: principal.message }}
+          />
+          <div className="mt-6">
+            <p className="font-bold text-base">{principal.name}</p>
+            <p className="text-sm text-[#FFC107]">{principal.title}</p>
           </div>
-
-          {/* Foto — kanan, keluar ke atas (overflow) */}
-          <div className="relative shrink-0 self-end hidden lg:block" style={{ width: "380px", height: "420px", marginBottom: "-1px" }}>
-            {principal.photoUrl ? (
-              <Image
-                src={principal.photoUrl}
-                alt={principal.name}
-                fill
-                sizes="380px"
-                className="object-contain object-bottom drop-shadow-2xl"
-              />
-            ) : (
-              <div className="absolute bottom-0 w-full h-[340px] bg-white/5 rounded-t-2xl flex items-center justify-center">
-                <svg className="h-16 w-16 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-            )}
-          </div>
-
-          {/* Foto mobile */}
-          <div className="relative w-56 h-64 self-center lg:hidden" style={{ marginBottom: "-1px" }}>
-            {principal.photoUrl ? (
-              <Image
-                src={principal.photoUrl}
-                alt={principal.name}
-                fill
-                sizes="224px"
-                className="object-contain object-bottom drop-shadow-xl"
-              />
-            ) : (
-              <div className="absolute bottom-0 w-full h-44 bg-white/5 rounded-t-xl flex items-center justify-center">
-                <svg className="h-12 w-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-            )}
-          </div>
-
         </div>
       </div>
+
+      {/* Foto mobile */}
+      {principal.photoUrl && (
+        <div className="relative w-full h-52 lg:hidden">
+          <Image
+            src={principal.photoUrl}
+            alt={principal.name}
+            fill
+            sizes="100vw"
+            className="object-cover object-top"
+          />
+          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#002244] to-transparent" />
+        </div>
+      )}
     </section>
   )
 }

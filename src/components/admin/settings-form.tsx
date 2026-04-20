@@ -190,7 +190,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                  <ImageUploader
                    onUploadComplete={(url) => setIdentity({ ...identity, logoUrl: url })}
                    currentImageUrl={identity.logoUrl || undefined}
-                   maxSizeMB={2}
+                   
                    acceptedFormats={["image/png", "image/jpeg", "image/webp"]}
                  />
                  <p className="text-xs text-slate-400 font-medium mt-3 text-center">
@@ -222,7 +222,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                     <ImageUploader
                       onUploadComplete={(url) => setIdentity({ ...identity, faviconUrl: url })}
                       currentImageUrl={identity.faviconUrl || undefined}
-                      maxSizeMB={1}
+                      
                       acceptedFormats={["image/png", "image/jpeg", "image/webp"]}
                     />
                     <p className="text-xs text-slate-400 font-medium mt-2">
